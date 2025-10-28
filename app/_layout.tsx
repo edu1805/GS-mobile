@@ -2,7 +2,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
 import React from "react";
-import { ThemeProvider, useTheme } from "./context/ThemeContext"; // ajuste o caminho
+import { ThemeProvider, useTheme } from "../src/context/ThemeContext"; // ajuste o caminho
+import { I18nextProvider } from "react-i18next";
+import i18n from "../src/services/i18n";
 
 // Criamos um componente separado para aplicar o tema dentro do Drawer
 function ThemedDrawer() {
@@ -19,6 +21,10 @@ function ThemedDrawer() {
         drawerStyle: { backgroundColor: colors.background },
       }}
     >
+
+      <Drawer.Screen name="index" options={{headerShown: false, drawerItemStyle: { display: 'none' }}}/>
+      <Drawer.Screen name="CadastrarScreen" options={{headerShown: false, drawerItemStyle: { display: 'none' }}}/>
+
       <Drawer.Screen
         name="HomeScreen"
         options={{
@@ -90,8 +96,10 @@ function ThemedDrawer() {
 
 export default function Layout() {
   return (
-    <ThemeProvider>
-      <ThemedDrawer />
-    </ThemeProvider>
+    <I18nextProvider i18n={i18n}>
+      <ThemeProvider>
+        <ThemedDrawer />
+      </ThemeProvider>
+    </I18nextProvider>
   );
 }

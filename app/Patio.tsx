@@ -2,9 +2,9 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Link, useFocusEffect } from 'expo-router';
 import React, { useState, useCallback } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
-import api from './services/api';
-import { Moto, MotoStatus } from './types/Moto';
-import { useTheme } from './context/ThemeContext'; // 👈 hook do tema
+import api from '../src/services/api';
+import { Moto, MotoStatus } from '../src/types/Moto';
+import { useTheme } from '../src/context/ThemeContext'; // 👈 hook do tema
 
 const statusLabels: Record<MotoStatus, string> = {
   pronta: 'Pronta',

@@ -1,0 +1,34 @@
+{
+  "login": {
+    "title": "Login",
+    "subtitle": "Sistema de Gerenciamento de Motos"
+  },
+  "placeholders": {
+    "email": "E-mail",
+    "password": "Senha"
+  },
+  "buttons": {
+    "login": "Entrar"
+  },
+  "links": {
+    "forgot_password": "Esqueceu a senha?",
+    "create_account": "Criar uma conta"
+  },
+  "alerts": {
+    "warning": "Atenção",
+    "error": "Erro",
+    "success": "Sucesso",
+    "fill_fields": "Preencha todos os campos!",
+    "enter_email_reset": "Digite o email para recuperar a senha",
+    "email_sent": "E-mail de recuperação enviado!",
+    "email_error": "Erro ao enviar e-mail. Verifique se o email está correto."
+  },
+  "errors": {
+    "login_failed": "Erro ao fazer login",
+    "invalid_credentials": "Email ou senha incorretos",
+    "invalid_email": "Email inválido",
+    "user_disabled": "Usuário desativado",
+    "too_many_attempts": "Muitas tentativas. Tente novamente mais tarde",
+    "unknown": "Erro desconhecido"
+  }
+}

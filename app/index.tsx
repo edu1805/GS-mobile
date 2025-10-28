@@ -3,14 +3,15 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityInd
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from './services/firebaseConfig';
+import { auth } from '../src/services/firebaseConfig';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
-  // Estados para armazenar os valores digitados
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
-
+  
+  const { t, i18n } = useTranslation();
   const router = useRouter();
 
   useEffect(() => {
@@ -24,14 +25,12 @@ export default function LoginScreen() {
         console.log("Erro ao verificar login", error);
       }
     };
-
     verificarUsuarioLogado();
   }, []);
 
-  // Função para realizar o login
   const handleLogin = async () => {
     if (!email || !senha) {
-      Alert.alert('Atenção', 'Preencha todos os campos!');
+      Alert.alert(t('alerts.warning'), t('alerts.fill_fields'));
       return;
     }
 
@@ -41,73 +40,76 @@ export default function LoginScreen() {
       
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
-      
       await AsyncStorage.setItem('@user', JSON.stringify(user));
+
       console.log('✅ Login realizado com sucesso');
-      
       router.push('/HomeScreen');
-      
+
     } catch (error: any) {
       console.log("Erro no login:", error);
       
-      let errorMessage = 'Erro ao fazer login';
-      
+      let errorMessage = t('errors.login_failed');
+
       switch (error.code) {
         case 'auth/invalid-credential':
         case 'auth/wrong-password':
         case 'auth/user-not-found':
-          errorMessage = 'Email ou senha incorretos';
+          errorMessage = t('errors.invalid_credentials');
           break;
         case 'auth/invalid-email':
-          errorMessage = 'Email inválido';
+          errorMessage = t('errors.invalid_email');
           break;
         case 'auth/user-disabled':
-          errorMessage = 'Usuário desativado';
+          errorMessage = t('errors.user_disabled');
           break;
         case 'auth/too-many-requests':
-          errorMessage = 'Muitas tentativas. Tente novamente mais tarde';
+          errorMessage = t('errors.too_many_attempts');
           break;
         default:
-          errorMessage = error.message || 'Erro desconhecido';
+          errorMessage = error.message || t('errors.unknown');
       }
-      
-      Alert.alert('Erro', errorMessage);
+
+      Alert.alert(t('alerts.error'), errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  // Função enviar o e-mail de reset de senha para o usuário
   const esqueceuSenha = () => {
     if (!email) {
-      Alert.alert('Atenção', 'Digite o email para recuperar a senha');
+      Alert.alert(t('alerts.warning'), t('alerts.enter_email_reset'));
       return;
     }
-    
+
     sendPasswordResetEmail(auth, email)
-      .then(() => { 
-        Alert.alert('Sucesso', 'E-mail de recuperação enviado!'); 
-      })
-      .catch((error) => {
-        console.log("Erro ao enviar email", error.message);
-        Alert.alert('Erro', 'Erro ao enviar e-mail. Verifique se o email está correto.');
-      });
+      .then(() => Alert.alert(t('alerts.success'), t('alerts.email_sent')))
+      .catch(() => Alert.alert(t('alerts.error'), t('alerts.email_error')));
   };
 
-  // Navegar para tela de cadastro
   const irParaCadastro = () => {
     router.push('/CadastrarScreen');
   };
 
+  const alternarIdioma = () => {
+    const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
+    i18n.changeLanguage(novoIdioma);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>🏍️ Login</Text>
-      <Text style={styles.subtitle}>Sistema de Gerenciamento de Motos</Text>
+      {/* 🔄 Botão de idioma */}
+      <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+        <Text style={styles.languageText}>
+          {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+        </Text>
+      </TouchableOpacity>
 
-      
+      <Text style={styles.titulo}>🏍️ {t("login.title")}</Text>
+      <Text style={styles.subtitle}>{t("login.subtitle")}</Text>
+
       <TextInput
         style={styles.input}
-        placeholder="E-mail"
+        placeholder={t('placeholders.email')}
         placeholderTextColor="#999"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -116,10 +118,9 @@ export default function LoginScreen() {
         editable={!loading}
       />
 
-      
       <TextInput
         style={styles.input}
-        placeholder="Senha"
+        placeholder={t('placeholders.password')}
         placeholderTextColor="#999"
         secureTextEntry={true}
         value={senha}
@@ -127,7 +128,6 @@ export default function LoginScreen() {
         editable={!loading}
       />
 
-      
       <TouchableOpacity 
         style={[styles.botao, loading && styles.botaoDisabled]} 
         onPress={handleLogin}
@@ -136,18 +136,17 @@ export default function LoginScreen() {
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.textoBotao}>Entrar</Text>
+          <Text style={styles.textoBotao}>{t('buttons.login')}</Text>
         )}
       </TouchableOpacity>
 
-      
       <View style={styles.linksContainer}>
         <TouchableOpacity onPress={esqueceuSenha} style={styles.link}>
-          <Text style={styles.linkText}>Esqueceu a senha?</Text>
+          <Text style={styles.linkText}>{t('links.forgot_password')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={irParaCadastro} style={styles.link}>
-          <Text style={styles.linkText}>Criar uma conta</Text>
+          <Text style={styles.linkText}>{t('links.create_account')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -161,6 +160,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8fafc',
     justifyContent: 'center',
     padding: 20,
+  },
+  languageButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    padding: 8,
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+  },
+  languageText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   titulo: {
     fontSize: 32,

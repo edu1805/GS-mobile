@@ -2,9 +2,9 @@ import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput, View, ActivityIndicator } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import api from './services/api';
-import { MotoStatus } from './types/Moto';
-import { useTheme } from './context/ThemeContext'; // 👈 hook do tema
+import api from '../src/services/api';
+import { MotoStatus } from '../src/types/Moto';
+import { useTheme } from '../src/context/ThemeContext'; // 👈 hook do tema
 
 export default function Cadastro() {
   const router = useRouter();

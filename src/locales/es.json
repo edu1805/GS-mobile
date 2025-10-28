@@ -1,0 +1,34 @@
+{
+  "login": {
+    "title": "Inicio de sesión",
+    "subtitle": "Sistema de Gestión de Motos"
+  },
+  "placeholders": {
+    "email": "Correo electrónico",
+    "password": "Contraseña"
+  },
+  "buttons": {
+    "login": "Entrar"
+  },
+  "links": {
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "create_account": "Crear una cuenta"
+  },
+  "alerts": {
+    "warning": "Atención",
+    "error": "Error",
+    "success": "Éxito",
+    "fill_fields": "¡Completa todos los campos!",
+    "enter_email_reset": "Introduce el correo para recuperar la contraseña",
+    "email_sent": "¡Correo de recuperación enviado!",
+    "email_error": "Error al enviar el correo. Verifica si es correcto."
+  },
+  "errors": {
+    "login_failed": "Error al iniciar sesión",
+    "invalid_credentials": "Correo o contraseña incorrectos",
+    "invalid_email": "Correo inválido",
+    "user_disabled": "Usuario desactivado",
+    "too_many_attempts": "Demasiados intentos. Inténtalo más tarde",
+    "unknown": "Error desconocido"
+  }
+}

@@ -2,8 +2,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useRouter, useFocusEffect } from 'expo-router'; // Adicione useFocusEffect
 import React, { useState, useEffect, useCallback } from 'react'; // Adicione useCallback
 import { FlatList, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Alert, TextInput } from 'react-native';
-import { Moto, MotoStatus } from './types/Moto';
-import api from './services/api';
+import { Moto, MotoStatus } from '../src/types/Moto';
+import api from '../src/services/api';
 
 const statusColors: Record<MotoStatus, string> = {
   pronta: '#4ade80',

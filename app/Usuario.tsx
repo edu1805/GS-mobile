@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { auth } from './services/firebaseConfig';
+import { auth } from '../src/services/firebaseConfig';
 import { deleteUser } from 'firebase/auth';
-import { useTheme } from './context/ThemeContext'; 
+import { useTheme } from '../src/context/ThemeContext'; 
 
 export default function Usuario() {
   const [email, setEmail] = useState<string | null>(null);
+  const [nome, setNome] = useState<string | null>(null);
   const router = useRouter();
   const { theme, toggleTheme, colors } = useTheme();
 
@@ -15,6 +16,7 @@ export default function Usuario() {
     const user = auth.currentUser;
     if (user) {
       setEmail(user.email);
+      setNome(user.displayName);
     }
   }, []);
 
@@ -59,7 +61,7 @@ export default function Usuario() {
       <Text style={[styles.titulo, { color: colors.text }]}>👤 Meu Perfil</Text>
       
       <View style={[styles.infoBox, { backgroundColor: colors.input }]}>
-        <Text style={[styles.label, { color: colors.text }]}>E-mail:</Text>
+        <Text style={[styles.label, { color: colors.text }]}>Conectado com:</Text>
         <Text style={[styles.valor, { color: colors.text }]}>{email}</Text>
       </View>
 

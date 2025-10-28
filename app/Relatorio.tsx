@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { Moto, MotoStatus } from './types/Moto';
+import { Moto, MotoStatus } from '../src/types/Moto';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import api from './services/api';
-import { useTheme } from './context/ThemeContext'; 
+import api from '../src/services/api';
+import { useTheme } from '../src/context/ThemeContext'; 
 
 const statusLabels: Record<MotoStatus, string> = {
   pronta: 'Pronta',
