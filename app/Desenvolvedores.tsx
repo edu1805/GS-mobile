@@ -1,8 +1,17 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Image } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from "react-i18next";
 
 export default function Integrantes() {
+
+  const { t, i18n } = useTranslation();
+  
+    const alternarIdioma = () => {
+      const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
+      i18n.changeLanguage(novoIdioma);
+    };
+
   const integrantes = [
     {
       nome: 'Eduardo do Nascimento Barriviera',
@@ -26,7 +35,15 @@ export default function Integrantes() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>👨‍💻 Desenvolvedores</Text>
+
+      {/* 🔄 Botão de idioma */}
+      <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+        <Text style={styles.languageText}>
+          {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+        </Text>
+      </TouchableOpacity>
+
+      <Text style={styles.title}>{t('developers.title')}</Text>
 
       {integrantes.map((dev, index) => (
         <View style={styles.card} key={index}>
@@ -45,16 +62,9 @@ export default function Integrantes() {
       ))}
 
         <View style={styles.footer}>
-            <Text style={styles.footerTitle}>🎯 Nosso Objetivo</Text>
-            <Text style={styles.footerText}>
-                Este projeto foi desenvolvido com o intuito de solucionar um problema real enfrentado pela empresa Mottu:
-                a desorganização e falta de controle sobre a localização das motos nos pátios de suas filiais.
-            </Text>
-            <Text style={styles.footerText}>
-                Nossa solução propõe um sistema capaz de mapear e monitorar, de forma precisa e automatizada, todas as motos
-                nos pátios. Utilizando tecnologias modernas, o sistema coleta e exibe as informações em uma interface visual intuitiva,
-                permitindo uma gestão mais eficiente e rápida localização das motos.
-            </Text>
+            <Text style={styles.footerTitle}>{t('developers.objectiveTitle')}</Text>
+            <Text style={styles.footerText}>{t('developers.objectiveText1')}</Text>
+            <Text style={styles.footerText}>{t('developers.objectiveText2')}</Text>
         </View>
 
 
@@ -67,6 +77,17 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f0f4f8',
     flexGrow: 1,
+  },
+  languageButton: {
+    alignSelf: 'flex-end',
+    right: 2,
+    padding: 10,
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+  },
+  languageText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   title: {
     fontSize: 26,

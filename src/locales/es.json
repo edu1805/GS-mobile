@@ -30,5 +30,49 @@
     "user_disabled": "Usuario desactivado",
     "too_many_attempts": "Demasiados intentos. Inténtalo más tarde",
     "unknown": "Error desconocido"
+  },
+  "user": {
+    "title": "👤 Mi Perfil",
+    "connected_with": "Conectado con:",
+    "buttons": {
+      "toggle_theme_light": "🌙 Cambiar a modo oscuro",
+      "toggle_theme_dark": "🌞 Cambiar a modo claro",
+      "logout": "Cerrar sesión",
+      "delete_account": "Eliminar cuenta"
+    },
+    "alertsUser": {
+      "delete_title": "Confirmar eliminación",
+      "delete_message": "¿Estás seguro de que deseas eliminar tu cuenta? ¡Esta acción no se puede deshacer!",
+      "cancel": "Cancelar",
+      "confirm_delete": "Eliminar",
+      "deleted": "Cuenta eliminada",
+      "deleted_message": "Tu cuenta ha sido eliminada con éxito.",
+      "no_user": "Ningún usuario conectado.",
+      "delete_error": "No se pudo eliminar la cuenta."
+    }
+  },
+  "register": {
+    "title": "👤 Crear cuenta",
+    "placeholders": {
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "password": "Contraseña"
+    },
+    "buttons": {
+      "register": "Registrarse",
+      "back": "Volver"
+    },
+    "alertsCreate": {
+      "success_create": "¡Cuenta creada con éxito!",
+      "error_create": "Error al crear la cuenta",
+      "weak_password": "La contraseña debe tener al menos 6 caracteres.",
+      "email_in_use": "El correo electrónico ya está en uso. Intente con otro."
+    }
+  },
+  "developers": {
+    "title": "👨‍💻 Desarrolladores",
+    "objectiveTitle": "🎯 Nuestro Objetivo",
+    "objectiveText1": "Este proyecto fue desarrollado con el propósito de resolver un problema real enfrentado por la empresa Mottu: la desorganización y la falta de control sobre la ubicación de las motocicletas en los patios de sus sucursales.",
+    "objectiveText2": "Nuestra solución propone un sistema capaz de mapear y monitorear, de manera precisa y automatizada, todas las motocicletas en los patios. Utilizando tecnologías modernas, el sistema recopila y muestra la información en una interfaz visual intuitiva, permitiendo una gestión más eficiente y una localización más rápida de las motos."
   }
 }

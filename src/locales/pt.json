@@ -30,5 +30,49 @@
     "user_disabled": "Usuário desativado",
     "too_many_attempts": "Muitas tentativas. Tente novamente mais tarde",
     "unknown": "Erro desconhecido"
+  },
+  "user": {
+    "title": "👤 Meu Perfil",
+    "connected_with": "Conectado com:",
+    "buttons": {
+      "toggle_theme_light": "🌙 Mudar para Modo Escuro",
+      "toggle_theme_dark": "🌞 Mudar para Modo Claro",
+      "logout": "Sair da Conta",
+      "delete_account": "Excluir Conta"
+    },
+    "alertsUser": {
+      "delete_title": "Confirmar Exclusão",
+      "delete_message": "Tem certeza que deseja excluir sua conta? Esta ação não poderá ser desfeita!",
+      "cancel": "Cancelar",
+      "confirm_delete": "Excluir",
+      "deleted": "Conta Excluída",
+      "deleted_message": "Sua conta foi excluída com sucesso.",
+      "no_user": "Nenhum usuário logado.",
+      "delete_error": "Não foi possível excluir a conta."
+    }
+  },
+  "register": {
+    "title": "👤 Criar Conta",
+    "placeholders": {
+      "name": "Nome",
+      "email": "E-mail",
+      "password": "Senha"
+    },
+    "buttons": {
+      "register": "Cadastrar",
+      "back": "Voltar"
+    },
+    "alertsCreate": {
+      "success_create": "Conta criada com sucesso!",
+      "error_create": "Erro ao criar conta",
+      "weak_password": "A senha deve conter pelo menos 6 caracteres.",
+      "email_in_use": "E-mail já está em uso. Tente outro."
+    }
+  },
+  "developers": {
+    "title": "👨‍💻 Desenvolvedores",
+    "objectiveTitle": "🎯 Nosso Objetivo",
+    "objectiveText1": "Este projeto foi desenvolvido com o intuito de solucionar um problema real enfrentado pela empresa Mottu: a desorganização e falta de controle sobre a localização das motos nos pátios de suas filiais.",
+    "objectiveText2": "Nossa solução propõe um sistema capaz de mapear e monitorar, de forma precisa e automatizada, todas as motos nos pátios. Utilizando tecnologias modernas, o sistema coleta e exibe as informações em uma interface visual intuitiva, permitindo uma gestão mais eficiente e rápida localização das motos."
   }
 }

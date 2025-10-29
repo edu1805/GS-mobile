@@ -5,12 +5,20 @@ import { useRouter } from 'expo-router';
 import { auth } from '../src/services/firebaseConfig';
 import { deleteUser } from 'firebase/auth';
 import { useTheme } from '../src/context/ThemeContext'; 
+import { useTranslation } from 'react-i18next';
 
 export default function Usuario() {
   const [email, setEmail] = useState<string | null>(null);
   const [nome, setNome] = useState<string | null>(null);
   const router = useRouter();
   const { theme, toggleTheme, colors } = useTheme();
+
+  const { t, i18n } = useTranslation();
+
+  const alternarIdioma = () => {
+    const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
+    i18n.changeLanguage(novoIdioma);
+  };
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -28,27 +36,25 @@ export default function Usuario() {
 
   // Função para excluir conta
   const excluirConta = () => {
-    Alert.alert(
-      "Confirmar Exclusão",
-      "Tem certeza que deseja excluir sua conta? Esta ação não poderá ser desfeita!",
+    Alert.alert(t('alertsUser.delete_title'),t('alertsuser.delete_message'),
       [
-        { text: "Cancelar", style: "cancel" },
+        { text: t('alertsUser.cancel'), style: "cancel" },
         {
-          text: "Excluir", style: 'destructive',
+          text: t('alertsUser.confirm_delete'), style: 'destructive',
           onPress: async () => {
             try {
               const user = auth.currentUser;
               if (user) {
                 await deleteUser(user); // Apaga do Firebase Auth
                 await AsyncStorage.removeItem('@user');
-                Alert.alert("Conta Excluída", "Sua conta foi excluída com sucesso.");
+                Alert.alert(t('alertsUser.deleted'), t('deleted_message'));
                 router.replace('/');
               } else {
-                Alert.alert("Erro", "Nenhum usuário logado.");
+                Alert.alert(t('alerts.error'), t('alertsUser.no_user'));
               }
             } catch (error) {
               console.log("Erro ao excluir conta:", error);
-              Alert.alert("Erro", "Não foi possível excluir conta.");
+              Alert.alert(t('alerts.error'), t('alertsUser.delete_error'));
             }
           }
         }
@@ -58,10 +64,18 @@ export default function Usuario() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.titulo, { color: colors.text }]}>👤 Meu Perfil</Text>
+
+      {/* 🔄 Botão de idioma */}
+      <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+        <Text style={styles.languageText}>
+          {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+        </Text>
+      </TouchableOpacity>
+
+      <Text style={[styles.titulo, { color: colors.text }]}>{t('user.title')}</Text>
       
       <View style={[styles.infoBox, { backgroundColor: colors.input }]}>
-        <Text style={[styles.label, { color: colors.text }]}>Conectado com:</Text>
+        <Text style={[styles.label, { color: colors.text }]}>{t('user.connected_with')}</Text>
         <Text style={[styles.valor, { color: colors.text }]}>{email}</Text>
       </View>
 
@@ -71,16 +85,17 @@ export default function Usuario() {
         onPress={toggleTheme}
       >
         <Text style={[styles.textoBotao, { color: colors.buttonText }]}>
-          Mudar para {theme === "light" ? "🌙 Modo Escuro" : "🌞 Modo Claro"}
+          {theme === "light" ? 
+            t('user.buttons.toggle_theme_light') : t('user.buttons.toggle_theme_dark')}
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={[styles.botao, { backgroundColor: '#2563eb' }]} onPress={realizarLogoff}>
-        <Text style={styles.textoBotao}>Sair da Conta</Text>
+        <Text style={styles.textoBotao}>{t('user.buttons.logout')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={[styles.botao, { backgroundColor: '#dc2626' }]} onPress={excluirConta}>
-        <Text style={styles.textoBotao}>Excluir Conta</Text>
+        <Text style={styles.textoBotao}>{t('user.buttons.delete_account')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -92,6 +107,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+  },
+  languageButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    padding: 8,
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+  },
+  languageText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   titulo: {
     fontSize: 28,
