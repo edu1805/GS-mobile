@@ -7,10 +7,10 @@ export default function Integrantes() {
 
   const { t, i18n } = useTranslation();
   
-    const alternarIdioma = () => {
-      const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
-      i18n.changeLanguage(novoIdioma);
-    };
+  const alternarIdioma = () => {
+    const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
+    i18n.changeLanguage(novoIdioma);
+  };
 
   const integrantes = [
     {

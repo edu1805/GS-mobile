@@ -74,5 +74,41 @@
     "objectiveTitle": "🎯 Nosso Objetivo",
     "objectiveText1": "Este projeto foi desenvolvido com o intuito de solucionar um problema real enfrentado pela empresa Mottu: a desorganização e falta de controle sobre a localização das motos nos pátios de suas filiais.",
     "objectiveText2": "Nossa solução propõe um sistema capaz de mapear e monitorar, de forma precisa e automatizada, todas as motos nos pátios. Utilizando tecnologias modernas, o sistema coleta e exibe as informações em uma interface visual intuitiva, permitindo uma gestão mais eficiente e rápida localização das motos."
+  },
+  "motoRegister": {
+    "title": "Cadastrar Nova Moto",
+    "placeholders": {
+      "plate": "Placa (ex: ABC1D23)",
+      "position": "Posição (ex: A1, B2, C3)",
+      "status": "Selecione o status..."
+    },
+    "statuses": {
+      "ready": "Pronta para usar",
+      "revision": "Requer revisão",
+      "reserved": "Reservada",
+      "out_of_service": "Fora de serviço"
+    },
+    "buttons": {
+      "register": "Cadastrar Moto",
+      "theme_light": "🌙 Modo Escuro",
+      "theme_dark": "🌞 Modo Claro"
+    },
+    "links": {
+      "view_all": "📋 Ver Todas as Motos",
+      "back_menu": "🏠 Voltar ao Menu"
+    },
+    "alerts": {
+      "warning": "Atenção",
+      "fill_plate": "Informe a placa da moto.",
+      "fill_position": "Informe a posição da moto.",
+      "select_status": "Selecione o status da moto.",
+      "success_title": "Sucesso",
+      "success_message": "Moto {{plate}} cadastrada com sucesso!\nPosição: {{position}}\nStatus: {{status}}",
+      "error_title": "Erro ao cadastrar moto.",
+      "error_invalid": "Dados inválidos.",
+      "error_conflict": "Moto já cadastrada.",
+      "error_server": "Erro no servidor.",
+      "error_connection": "Não foi possível conectar ao servidor."
+    }
   }
 }

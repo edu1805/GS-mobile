@@ -74,5 +74,41 @@
     "objectiveTitle": "🎯 Nuestro Objetivo",
     "objectiveText1": "Este proyecto fue desarrollado con el propósito de resolver un problema real enfrentado por la empresa Mottu: la desorganización y la falta de control sobre la ubicación de las motocicletas en los patios de sus sucursales.",
     "objectiveText2": "Nuestra solución propone un sistema capaz de mapear y monitorear, de manera precisa y automatizada, todas las motocicletas en los patios. Utilizando tecnologías modernas, el sistema recopila y muestra la información en una interfaz visual intuitiva, permitiendo una gestión más eficiente y una localización más rápida de las motos."
+  },
+  "motoRegister": {
+    "title": "Registrar Nueva Moto",
+    "placeholders": {
+      "plate": "Placa (ej: ABC1D23)",
+      "position": "Posición (ej: A1, B2, C3)",
+      "status": "Seleccione el estado..."
+    },
+    "statuses": {
+      "ready": "Lista para usar",
+      "revision": "Requiere revisión",
+      "reserved": "Reservada",
+      "out_of_service": "Fuera de servicio"
+    },
+    "buttons": {
+      "register": "Registrar Moto",
+      "theme_light": "🌙 Modo Oscuro",
+      "theme_dark": "🌞 Modo Claro"
+    },
+    "links": {
+      "view_all": "📋 Ver Todas las Motos",
+      "back_menu": "🏠 Volver al Menú"
+    },
+    "alerts": {
+      "warning": "Atención",
+      "fill_plate": "Ingrese la placa de la moto.",
+      "fill_position": "Ingrese la posición de la moto.",
+      "select_status": "Seleccione el estado de la moto.",
+      "success_title": "Éxito",
+      "success_message": "¡Moto {{plate}} registrada con éxito!\nPosición: {{position}}\nEstado: {{status}}",
+      "error_title": "Error al registrar la motocicleta.",
+      "error_invalid": "Datos inválidos.",
+      "error_conflict": "Moto ya registrada.",
+      "error_server": "Error en el servidor.",
+      "error_connection": "No se pudo conectar al servidor."
+    }
   }
 }

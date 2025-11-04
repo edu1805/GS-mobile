@@ -1,10 +1,11 @@
 import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, View, ActivityIndicator } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, TextInput, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import api from '../src/services/api';
 import { MotoStatus } from '../src/types/Moto';
-import { useTheme } from '../src/context/ThemeContext'; // 👈 hook do tema
+import { useTheme } from '../src/context/ThemeContext'; 
+import { useTranslation } from 'react-i18next';
 
 export default function Cadastro() {
   const router = useRouter();
@@ -13,14 +14,26 @@ export default function Cadastro() {
   const [loading, setLoading] = useState(false);
   const [moto, setMoto] = useState({ placa: '', posicao: '', status: '' as MotoStatus });
 
+  const { t, i18n } = useTranslation();
+    
+    const alternarIdioma = () => {
+      const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
+      i18n.changeLanguage(novoIdioma);
+    };
+
   const handleChange = (field: string, value: string) => {
     setMoto((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
-    if (!moto.placa.trim()) { Alert.alert('Atenção', 'Informe a placa da moto.'); return; }
-    if (!moto.posicao.trim()) { Alert.alert('Atenção', 'Informe a posição da moto.'); return; }
-    if (!moto.status) { Alert.alert('Atenção', 'Selecione o status da moto.'); return; }
+    if (!moto.placa.trim()) { Alert.alert(
+      t('motoRegister.alerts.warning'), t('motoRegister.alerts.fill_plate')); return; }
+
+    if (!moto.posicao.trim()) { Alert.alert(
+      t('motoRegister.alerts.warning'), 'motoRegister.alerts.fill_position'); return; }
+
+    if (!moto.status) { Alert.alert(
+      t('motoRegister.alerts.warning'), t('motoRegister.alerts.select_status')); return; }
 
     try {
       setLoading(true);
@@ -35,18 +48,18 @@ export default function Cadastro() {
       const response = await api.post('/motos/criar', dadosMoto);
 
       Alert.alert(
-        'Sucesso',
-        `Moto ${moto.placa} cadastrada com sucesso!\nPosição: ${moto.posicao}\nStatus: ${getStatusLabel(moto.status)}`,
-        [{ text: 'OK', onPress: () => { setMoto({ placa: '', posicao: '', status: '' as MotoStatus }); router.back(); } }]
+        t('motoRegister.alerts.success_title'),
+        t('motoRegister.alerts.success_message', {plate: moto.placa, position: moto.posicao, status: getStatusLabel(moto.status)}),
+        [{ text: 'OK', onPress: () => { setMoto({ placa: '', posicao: '', status: '' as MotoStatus }); router.push('/HomeScreen'); } }]
       );
 
     } catch (error: any) {
-      let errorMessage = 'Erro ao cadastrar moto';
+      let errorMessage = t('motoRegister.alert.error_title');
       if (error.response) {
-        if (error.response.status === 400) errorMessage = 'Dados inválidos.';
-        else if (error.response.status === 409) errorMessage = 'Moto já cadastrada.';
-        else errorMessage = `Erro ${error.response.status}: ${error.response.data?.message || 'Erro no servidor'}`;
-      } else if (error.request) errorMessage = 'Não foi possível conectar ao servidor.';
+        if (error.response.status === 400) errorMessage = t('motoRegister.alert.error_invalid');
+        else if (error.response.status === 409) errorMessage = t('motoRegister.alert.error_conflict');
+        else errorMessage = `Erro ${error.response.status}: ${error.response.data?.message || t('motoRegister.alert.error_server')}`;
+      } else if (error.request) errorMessage = t('motoRegister.alert.error_connection');
       Alert.alert('Erro', errorMessage);
     } finally {
       setLoading(false);
@@ -55,28 +68,36 @@ export default function Cadastro() {
 
   const getStatusLabel = (status: MotoStatus) => {
     const labels: Record<MotoStatus, string> = {
-      pronta: 'Pronta para usar',
-      revisao: 'Requer revisão',
-      reservada: 'Reservada',
-      'fora de serviço': 'Fora de serviço'
+      pronta: t('motoRegister.statuses.ready'),
+      revisao: t('motoRegister.statuses.revision'),
+      reservada: t('motoRegister.statuses.reserved'),
+      'fora de serviço': t('motoRegister.statuses.out_of_service')
     };
     return labels[status] || status;
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+
+      {/* 🔄 Botão de idioma */}
+      <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+        <Text style={styles.languageText}>
+          {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+        </Text>
+      </TouchableOpacity>
+
       {/* Botão de alternar tema */}
       <Pressable style={[styles.themeButton, { backgroundColor: colors.button }]} onPress={toggleTheme}>
-        <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>{theme === 'light' ? '🌙 Modo Escuro' : '🌞 Modo Claro'}</Text>
+        <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>{theme === 'light' ? t('motoRegister.buttons.theme_dark') : t('motoRegister.buttons.theme_light')}</Text>
       </Pressable>
 
-      <Text style={[styles.titulo, { color: colors.text }]}>Cadastrar Nova Moto</Text>
+      <Text style={[styles.titulo, { color: colors.text }]}>{t('motoRegister.title')}</Text>
 
       <TextInput
         value={moto.placa}
         onChangeText={(text) => handleChange('placa', text)}
         style={[styles.input, { backgroundColor: colors.input, color: colors.text, borderColor: colors.border }]}
-        placeholder="Placa (ex: ABC1D23)"
+        placeholder={t('motoRegister.placeholders.plate')}
         placeholderTextColor={colors.placeholder}
         autoCapitalize="characters"
         maxLength={7}
@@ -87,7 +108,7 @@ export default function Cadastro() {
         value={moto.posicao}
         onChangeText={(text) => handleChange('posicao', text)}
         style={[styles.input, { backgroundColor: colors.input, color: colors.text, borderColor: colors.border }]}
-        placeholder="Posição (ex: A1, B2, C3)"
+        placeholder={t('motoRegister.placeholders.position')}
         placeholderTextColor={colors.placeholder}
         autoCapitalize="characters"
         editable={!loading}
@@ -96,12 +117,12 @@ export default function Cadastro() {
       <RNPickerSelect
         onValueChange={(value) => handleChange('status', value)}
         value={moto.status}
-        placeholder={{ label: 'Selecione o status...', value: null }}
+        placeholder={{ label: t('motoRegister.placeholders.status'), value: null }}
         items={[
-          { label: 'Pronta para usar', value: 'pronta' },
-          { label: 'Requer revisão', value: 'revisao' },
-          { label: 'Reservada', value: 'reservada' },
-          { label: 'Fora de serviço', value: 'fora de serviço' },
+          { label: t('motoRegister.statuses.ready'), value: 'pronta' },
+          { label: t('motoRegister.statuses.revision'), value: 'revisao' },
+          { label: t('motoRegister.statuses.reserved'), value: 'reservada' },
+          { label: t('motoRegister.statuses.out_of_service'), value: 'fora de serviço' },
         ]}
         style={{
           inputIOS: { ...styles.pickerInput, backgroundColor: colors.input, color: colors.text, borderColor: colors.border },
@@ -111,12 +132,12 @@ export default function Cadastro() {
       />
 
       <Pressable style={[styles.botao, loading && styles.botaoDisabled, { backgroundColor: colors.button }]} onPress={handleSubmit} disabled={loading}>
-        {loading ? <ActivityIndicator color={colors.buttonText} /> : <Text style={[styles.botaoTexto, { color: colors.buttonText }]}>Cadastrar Moto</Text>}
+        {loading ? <ActivityIndicator color={colors.buttonText} /> : <Text style={[styles.botaoTexto, { color: colors.buttonText }]}>{t('motoRegister.buttons.register')}</Text>}
       </Pressable>
 
       <View style={styles.links}>
-        <Link href="/Patio" style={[styles.linkTexto, { color: colors.button }]}>📋 Ver Todas as Motos</Link>
-        <Link href="/HomeScreen" style={[styles.linkTexto, { color: colors.button }]}>🏠 Voltar ao Menu</Link>
+        <Link href="/Patio" style={[styles.linkTexto, { color: colors.button }]}>{t('motoRegister.links.view_all')}</Link>
+        <Link href="/HomeScreen" style={[styles.linkTexto, { color: colors.button }]}>{t('motoRegister.links.back_menu')}</Link>
       </View>
     </View>
   );
@@ -124,6 +145,15 @@ export default function Cadastro() {
 
 const styles = StyleSheet.create({
   container: { padding: 24, flex: 1, justifyContent: 'center' },
+  languageButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    padding: 8,
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+  },
+  languageText: { color: '#fff', fontWeight: 'bold'},
   titulo: { fontSize: 26, fontWeight: 'bold', marginBottom: 24, textAlign: 'center' },
   input: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 15, paddingVertical: 12, fontSize: 16, marginBottom: 16 },
   pickerInput: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 15, paddingVertical: 12, fontSize: 16, marginBottom: 16 },
