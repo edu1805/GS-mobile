@@ -16,10 +16,10 @@ export default function Cadastro() {
 
   const { t, i18n } = useTranslation();
     
-    const alternarIdioma = () => {
-      const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
-      i18n.changeLanguage(novoIdioma);
-    };
+  const alternarIdioma = () => {
+    const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
+    i18n.changeLanguage(novoIdioma);
+  };
 
   const handleChange = (field: string, value: string) => {
     setMoto((prev) => ({ ...prev, [field]: value }));
@@ -145,14 +145,7 @@ export default function Cadastro() {
 
 const styles = StyleSheet.create({
   container: { padding: 24, flex: 1, justifyContent: 'center' },
-  languageButton: {
-    position: 'absolute',
-    top: 50,
-    right: 20,
-    padding: 8,
-    backgroundColor: '#2563eb',
-    borderRadius: 8,
-  },
+  languageButton: { position: 'absolute', top: 50, right: 20, padding: 8, backgroundColor: '#2563eb', borderRadius: 8},
   languageText: { color: '#fff', fontWeight: 'bold'},
   titulo: { fontSize: 26, fontWeight: 'bold', marginBottom: 24, textAlign: 'center' },
   input: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 15, paddingVertical: 12, fontSize: 16, marginBottom: 16 },

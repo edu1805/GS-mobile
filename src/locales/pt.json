@@ -110,5 +110,45 @@
       "error_server": "Erro no servidor.",
       "error_connection": "Não foi possível conectar ao servidor."
     }
+  },
+  "patio": {
+    "title": "Lista de Motos",
+    "subtitle": "Total: {{count}} motos",
+    "buttons": {
+      "create": "Cadastrar nova moto",
+      "retry": "Tentar novamente",
+      "theme_dark": "🌙 Modo Escuro",
+      "theme_light": "🌞 Modo Claro",
+      "delete": "Excluir"
+    },
+    "labels": {
+      "position": "Posição: {{position}}",
+      "status": "Status: {{status}}",
+      "updated": "Atualizado: {{date}}"
+    },
+    "status": {
+      "pronta": "Pronta",
+      "revisao": "Revisão",
+      "reservada": "Reservada",
+      "fora_de_servico": "Fora de serviço"
+    },
+    "alerts": {
+      "error_title": "Erro",
+      "error_load": "Não foi possível carregar as motos.",
+      "error_delete": "Não foi possível excluir a moto.",
+      "success_title": "Sucesso",
+      "success_delete": "Moto excluída com sucesso!",
+      "confirm_delete_title": "Confirmar Exclusão",
+      "confirm_delete_message": "Tem certeza que deseja excluir esta moto?"
+    },
+    "empty": {
+      "message": "Nenhuma moto cadastrada."
+    },
+    "links": {
+      "back_menu": "Voltar ao Menu"
+    },
+    "loading": {
+      "message": "Carregando motos..."
+    }
   }
 }

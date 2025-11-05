@@ -110,5 +110,45 @@
       "error_server": "Error en el servidor.",
       "error_connection": "No se pudo conectar al servidor."
     }
+  },
+  "patio": {
+    "title": "Lista de Motocicletas",
+    "subtitle": "Total: {{count}} motos",
+    "buttons": {
+      "create": "Registrar nueva moto",
+      "retry": "Intentar de nuevo",
+      "theme_dark": "🌙 Modo Oscuro",
+      "theme_light": "🌞 Modo Claro",
+      "delete": "Eliminar"
+    },
+    "labels": {
+      "position": "Posición: {{position}}",
+      "status": "Estado: {{status}}",
+      "updated": "Actualizado: {{date}}"
+    },
+    "status": {
+      "pronta": "Lista",
+      "revisao": "Revisión",
+      "reservada": "Reservada",
+      "fora_de_servico": "Fuera de servicio"
+    },
+    "alerts": {
+      "error_title": "Error",
+      "error_load": "No se pudieron cargar las motos.",
+      "error_delete": "No se pudo eliminar la moto.",
+      "success_title": "Éxito",
+      "success_delete": "¡Moto eliminada con éxito!",
+      "confirm_delete_title": "Confirmar eliminación",
+      "confirm_delete_message": "¿Está seguro de que desea eliminar esta moto?"
+    },
+    "empty": {
+      "message": "No hay motos registradas."
+    },
+    "links": {
+      "back_menu": "Volver al menú"
+    },
+    "loading": {
+      "message": "Cargando motos..."
+    }
   }
 }

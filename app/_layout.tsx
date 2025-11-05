@@ -36,7 +36,7 @@ function ThemedDrawer() {
           ),
         }}
       />
-
+      {/* feito */}
       <Drawer.Screen
         name="Cadastro"
         options={{
