@@ -2,10 +2,12 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Image } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from "react-i18next";
+import { useTheme } from "../src/context/ThemeContext";
 
 export default function Integrantes() {
 
   const { t, i18n } = useTranslation();
+   const { theme, toggleTheme, colors } = useTheme();
   
   const alternarIdioma = () => {
     const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
@@ -33,25 +35,36 @@ export default function Integrantes() {
     }
   ];
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
+ return (
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
 
-      {/* 🔄 Botão de idioma */}
-      <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
-        <Text style={styles.languageText}>
-          {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
-        </Text>
-      </TouchableOpacity>
+      {/* 🔄 Botões de idioma e tema */}
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+          <Text style={styles.languageText}>
+            {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+          </Text>
+        </TouchableOpacity>
 
-      <Text style={styles.title}>{t('developers.title')}</Text>
+        <TouchableOpacity 
+          style={[styles.themeButton, { backgroundColor: colors.button }]} 
+          onPress={toggleTheme}
+        >
+          <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
+            {theme === "light" ? t('patio.buttons.theme_dark') : t('patio.buttons.theme_light')}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={[styles.title, { color: colors.text }]}>{t('developers.title')}</Text>
 
       {integrantes.map((dev, index) => (
-        <View style={styles.card} key={index}>
+        <View style={[styles.card, { backgroundColor: colors.card }]} key={index}>
           <Image source={dev.avatar} style={styles.avatar} />
 
           <View style={styles.textContainer}>
-            <Text style={styles.name}>{dev.nome}</Text>
-            <Text style={styles.rm}>RM: {dev.rm}</Text>
+            <Text style={[styles.name, { color: colors.text }]}>{dev.nome}</Text>
+            <Text style={[styles.rm, { color: colors.text }]}>RM: {dev.rm}</Text>
 
             <TouchableOpacity onPress={() => Linking.openURL(dev.github)} style={styles.infoRow}>
               <Ionicons name="logo-github" size={16} color="#2563eb" style={styles.icon} />
@@ -61,12 +74,11 @@ export default function Integrantes() {
         </View>
       ))}
 
-        <View style={styles.footer}>
-            <Text style={styles.footerTitle}>{t('developers.objectiveTitle')}</Text>
-            <Text style={styles.footerText}>{t('developers.objectiveText1')}</Text>
-            <Text style={styles.footerText}>{t('developers.objectiveText2')}</Text>
+        <View style={[styles.footer, { borderTopColor: colors.border }]}>
+            <Text style={[styles.footerTitle, { color: colors.text }]}>{t('developers.objectiveTitle')}</Text>
+            <Text style={[styles.footerText, { color: colors.text }]}>{t('developers.objectiveText1')}</Text>
+            <Text style={[styles.footerText, { color: colors.text }]}>{t('developers.objectiveText2')}</Text>
         </View>
-
 
     </ScrollView>
   );
@@ -78,15 +90,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f4f8',
     flexGrow: 1,
   },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 10,
+  },
   languageButton: {
-    alignSelf: 'flex-end',
-    right: 2,
     padding: 10,
     backgroundColor: '#2563eb',
     borderRadius: 8,
   },
   languageText: {
     color: '#fff',
+    fontWeight: 'bold',
+  },
+  themeButton: {
+    padding: 10,
+    borderRadius: 8,
+    minWidth: 50,
+    alignItems: 'center',
+  },
+  themeButtonText: {
+    fontSize: 18,
     fontWeight: 'bold',
   },
   title: {
@@ -147,21 +174,20 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   footer: {
-  marginTop: 30,
-  paddingTop: 20,
-  borderTopWidth: 1,
-  borderTopColor: '#ccc',
-},
-footerTitle: {
-  fontSize: 20,
-  fontWeight: 'bold',
-  marginBottom: 10,
-},
-footerText: {
-  fontSize: 16,
-  color: '#333',
-  marginBottom: 8,
-  textAlign: 'justify',
-},
-
+    marginTop: 30,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+  },
+  footerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  footerText: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 8,
+    textAlign: 'justify',
+  },
 });

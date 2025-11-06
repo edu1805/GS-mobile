@@ -47,7 +47,7 @@ function ThemedDrawer() {
           ),
         }}
       />
-
+      {/* feito */}
       <Drawer.Screen
         name="Patio"
         options={{

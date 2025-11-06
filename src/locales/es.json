@@ -150,5 +150,41 @@
     "loading": {
       "message": "Cargando motos..."
     }
+  },
+  "dashboard": {
+    "title": "📍 Panel de Motos",
+    "subtitle": "Total: {{count}} motos",
+    "loading": "Cargando motos...",
+    "empty": "No se encontraron motos",
+    "retry": "Intentar de nuevo",
+    "buttons": {
+      "new_moto": "+ Nueva Moto",
+      "view_all": "Ver todas",
+      "cancel": "Cancelar",
+      "theme_dark": "🌙 Modo Oscuro",
+      "theme_light": "☀️ Modo Claro"
+    },
+    "modal": {
+      "title": "Editar Moto",
+      "plate": "Placa: {{plate}}",
+      "current_status": "Estado actual: {{status}}",
+      "new_position": "Nueva Posición:",
+      "position_placeholder": "Ej: A1, B2, C3...",
+      "change_status": "Cambiar Estado:",
+      "updating": "Actualizando..."
+    },
+    "status": {
+      "pronta": "Lista",
+      "revisao": "Revisión",
+      "reservada": "Reservada",
+      "fora_de_servico": "Fuera de servicio"
+    },
+    "alerts": {
+      "success": "Éxito",
+      "success_message": "¡Moto {{plate}} actualizada!\nEstado: {{status}}\nPosición: {{position}}",
+      "error": "Error",
+      "load_error": "No se pudieron cargar las motos",
+      "update_error": "No se pudo actualizar la moto"
+    }
   }
 }

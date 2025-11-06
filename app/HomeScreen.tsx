@@ -4,6 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react'; // Adicione use
 import { FlatList, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Alert, TextInput } from 'react-native';
 import { Moto, MotoStatus } from '../src/types/Moto';
 import api from '../src/services/api';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '../src/context/ThemeContext';
 
 const statusColors: Record<MotoStatus, string> = {
   pronta: '#4ade80',
@@ -21,6 +23,8 @@ const statusLabels: Record<MotoStatus, string> = {
 
 const PatioGrid: React.FC = () => {
   const router = useRouter();
+  const { t, i18n } = useTranslation();
+  const { theme, toggleTheme, colors } = useTheme();
 
   const [motos, setMotos] = useState<Moto[]>([]);
   const [selectedMoto, setSelectedMoto] = useState<Moto | null>(null);
@@ -29,6 +33,19 @@ const PatioGrid: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [novaPosicao, setNovaPosicao] = useState('');
   const [updating, setUpdating] = useState(false);
+
+  // Labels de status traduzidos
+  const statusLabels: Record<MotoStatus, string> = {
+    pronta: t('dashboard.status.pronta'),
+    revisao: t('dashboard.status.revisao'),
+    reservada: t('dashboard.status.reservada'),
+    "fora de serviço": t('dashboard.status.fora_de_servico')
+  };
+
+  const alternarIdioma = () => {
+    const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
+    i18n.changeLanguage(novoIdioma);
+  };
 
   // Buscar motos da API
   const fetchMotos = async () => {
@@ -39,7 +56,7 @@ const PatioGrid: React.FC = () => {
       setMotos(response.data);
     } catch (error) {
       console.error('❌ Erro ao carregar motos:', error);
-      Alert.alert('Erro', 'Não foi possível carregar as motos');
+      Alert.alert(t('dashboard.alerts.error'), t('dashboard.alerts.load_error'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -94,12 +111,17 @@ const PatioGrid: React.FC = () => {
       setModalVisible(false);
       setNovaPosicao('');
 
-      Alert.alert('Sucesso', 
-        `Moto ${selectedMoto.placa} atualizada!\nStatus: ${statusLabels[newStatus]}\nPosição: ${novaPosicao}`
+      Alert.alert(
+        t('dashboard.alerts.success'), 
+        t('dashboard.alerts.success_message', { 
+          plate: selectedMoto.placa, 
+          status: statusLabels[newStatus], 
+          position: novaPosicao 
+        })
       );
     } catch (error) {
       console.error('Erro ao atualizar moto:', error);
-      Alert.alert('Erro', 'Não foi possível atualizar a moto');
+      Alert.alert(t('dashboard.alerts.error'), t('dashboard.alerts.update_error'));
     } finally {
       setUpdating(false);
     }
@@ -115,17 +137,39 @@ const PatioGrid: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color="#2563eb" />
-        <Text style={styles.loadingText}>Carregando motos...</Text>
+        <Text style={[styles.loadingText, { color: colors.text }]}>
+          {t('dashboard.loading')}
+        </Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>📍 Dashboard de Motos</Text>
-      <Text style={styles.subtitle}>Total: {motos.length} motos</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* 🔄 Botões de idioma e tema */}
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+          <Text style={styles.languageText}>
+            {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.themeButton, { backgroundColor: colors.button }]} 
+          onPress={toggleTheme}
+        >
+          <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
+            {theme === "light" ? '🌙' : '☀️'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={[styles.title, { color: colors.text }]}>{t('dashboard.title')}</Text>
+      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+        {t('dashboard.subtitle', { count: motos.length })}
+      </Text>
 
       <FlatList
         data={motos}
@@ -137,9 +181,11 @@ const PatioGrid: React.FC = () => {
         onRefresh={onRefresh}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Nenhuma moto encontrada</Text>
+            <Text style={[styles.emptyText, { color: colors.text }]}>
+              {t('dashboard.empty')}
+            </Text>
             <TouchableOpacity onPress={fetchMotos} style={styles.retryButton}>
-              <Text style={styles.retryButtonText}>Tentar novamente</Text>
+              <Text style={styles.retryButtonText}>{t('dashboard.retry')}</Text>
             </TouchableOpacity>
           </View>
         }
@@ -147,13 +193,16 @@ const PatioGrid: React.FC = () => {
           <Pressable
             style={[
               styles.motoBox,
-              { borderColor: statusColors[item.status] }
+              { 
+                borderColor: statusColors[item.status],
+                backgroundColor: colors.card
+              }
             ]}
             onPress={() => handlePress(item)}
           >
-            <FontAwesome name="motorcycle" size={20} color="#1f2937" />
-            <Text style={styles.placa}>{item.placa}</Text>
-            <Text style={styles.posicao}>{item.posicao}</Text>
+            <FontAwesome name="motorcycle" size={20} color={colors.text} />
+            <Text style={[styles.placa, { color: colors.text }]}>{item.placa}</Text>
+            <Text style={[styles.posicao, { color: colors.text }]}>{item.posicao}</Text>
             <View style={[styles.statusIndicator, { backgroundColor: statusColors[item.status] }]} />
           </Pressable>
         )}
@@ -161,10 +210,10 @@ const PatioGrid: React.FC = () => {
 
       <View style={styles.buttonsRow}>
         <TouchableOpacity style={styles.addButton} onPress={() => router.push('/Cadastro')}>
-          <Text style={styles.addButtonText}>+ Nova Moto</Text>
+          <Text style={styles.addButtonText}>{t('dashboard.buttons.new_moto')}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addButton} onPress={() => router.push('/Patio')}>
-          <Text style={styles.addButtonText}>Ver todas</Text>
+          <Text style={styles.addButtonText}>{t('dashboard.buttons.view_all')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -176,36 +225,52 @@ const PatioGrid: React.FC = () => {
         onRequestClose={() => !updating && setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Editar Moto</Text>
+          <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>
+              {t('dashboard.modal.title')}
+            </Text>
 
             {/* Informações da moto */}
             <View style={styles.motoInfo}>
-              <Text style={styles.motoPlaca}>Placa: {selectedMoto?.placa}</Text>
-              <Text style={styles.motoStatus}>
-                Status atual: {selectedMoto && statusLabels[selectedMoto.status]}
+              <Text style={[styles.motoPlaca, { color: colors.text }]}>
+                {t('dashboard.modal.plate', { plate: selectedMoto?.placa })}
+              </Text>
+              <Text style={[styles.motoStatus, { color: colors.textSecondary }]}>
+                {t('dashboard.modal.current_status', { 
+                  status: selectedMoto && statusLabels[selectedMoto.status] 
+                })}
               </Text>
             </View>
 
             {/* Campo para nova posição */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Nova Posição:</Text>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>
+                {t('dashboard.modal.new_position')}
+              </Text>
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { 
+                  backgroundColor: colors.input, 
+                  color: colors.text,
+                  borderColor: colors.border
+                }]}
                 value={novaPosicao}
                 onChangeText={setNovaPosicao}
-                placeholder="Ex: A1, B2, C3..."
-                placeholderTextColor="#9ca3af"
+                placeholder={t('dashboard.modal.position_placeholder')}
+                placeholderTextColor={colors.textSecondary}
                 editable={!updating}
               />
             </View>
 
-            <Text style={styles.sectionTitle}>Alterar Status:</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              {t('dashboard.modal.change_status')}
+            </Text>
 
             {updating ? (
               <View style={styles.updatingContainer}>
                 <ActivityIndicator size="large" color="#2563eb" />
-                <Text style={styles.updatingText}>Atualizando...</Text>
+                <Text style={[styles.updatingText, { color: colors.text }]}>
+                  {t('dashboard.modal.updating')}
+                </Text>
               </View>
             ) : (
               <>
@@ -237,8 +302,8 @@ const PatioGrid: React.FC = () => {
               disabled={updating}
               style={styles.cancelButton}
             >
-              <Text style={[styles.cancelText, updating && styles.disabledCancel]}>
-                Cancelar
+              <Text style={[styles.cancelText, { color: colors.text }, updating && styles.disabledCancel]}>
+                {t('dashboard.buttons.cancel')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -254,6 +319,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  languageButton: {
+    padding: 10,
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+  },
+  languageText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  themeButton: {
+    padding: 10,
+    borderRadius: 8,
+    minWidth: 50,
+    alignItems: 'center',
+  },
+  themeButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   title: {
     fontSize: 20,
@@ -279,7 +371,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#f7fbff',
     padding: 6
   },
   placa: {
@@ -320,7 +412,7 @@ const styles = StyleSheet.create({
   motoInfo: {
     width: '100%',
     padding: 12,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#bebebe',
     borderRadius: 8,
     marginBottom: 16,
   },
