@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Moto, MotoStatus } from '../src/types/Moto';
-import { router } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import api from '../src/services/api';
 import { useTheme } from '../src/context/ThemeContext'; 
+import { useTranslation } from 'react-i18next';
 
 const statusLabels: Record<MotoStatus, string> = {
   pronta: 'Pronta',
@@ -18,14 +19,29 @@ export default function Relatorio() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const { colors, theme, toggleTheme } = useTheme(); 
+  const { colors, theme, toggleTheme } = useTheme();
+  const { t, i18n } = useTranslation();
+  const router = useRouter();
+
+  // Labels de status traduzidos
+  const statusLabels: Record<MotoStatus, string> = {
+    pronta: t('report.status.pronta'),
+    revisao: t('report.status.revisao'),
+    reservada: t('report.status.reservada'),
+    "fora de serviço": t('report.status.fora_de_servico')
+  };
+
+  const alternarIdioma = () => {
+    const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
+    i18n.changeLanguage(novoIdioma);
+  };
 
   const carregarMotos = async () => {
     try {
       const response = await api.get<Moto[]>('/motos');
       setMotos(response.data);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível carregar as motos para o relatório');
+      Alert.alert(t('report.alerts.error'), t('report.alerts.load_error'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -55,36 +71,48 @@ export default function Relatorio() {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.button} />
-        <Text style={[styles.loadingText, { color: colors.text }]}>Carregando relatório...</Text>
+        <Text style={[styles.loadingText, { color: colors.text }]}>
+          {t('report.loading')}
+        </Text>
       </View>
     );
   }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Botão de alternar tema */}
-      <TouchableOpacity 
-        style={[styles.themeButton, { backgroundColor: colors.button }]}
-        onPress={toggleTheme}
-      >
-        <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
-          {theme === 'light' ? '🌙 Modo Escuro' : '🌞 Modo Claro'}
-        </Text>
-      </TouchableOpacity>
+      {/* 🔄 Botões de idioma e tema */}
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+          <Text style={styles.languageText}>
+            {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+          </Text>
+        </TouchableOpacity>
 
-      <Text style={[styles.title, { color: colors.text }]}>📊 Relatório de Motos por Status</Text>
+        <TouchableOpacity 
+          style={[styles.themeButton, { backgroundColor: colors.button }]}
+          onPress={toggleTheme}
+        >
+          <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
+            {theme === 'light' ? '🌙' : '☀️'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={[styles.title, { color: colors.text }]}>
+        {t('report.title')}
+      </Text>
 
       {/* Card de totais */}
       <View style={[styles.totalBox, { backgroundColor: colors.input, borderLeftColor: colors.button }]}>
         <Text style={[styles.totalText, { color: colors.text }]}>
-          Total de motos cadastradas: {motos.length}
+          {t('report.total_registered', { count: motos.length })}
         </Text>
         <View style={styles.totaisContainer}>
           {Object.keys(statusLabels).map((statusKey) => {
             const status = statusKey as MotoStatus;
             return (
               <Text key={status} style={[styles.totalStatus, { color: colors.text, backgroundColor: colors.button }]}>
-                {statusLabels[status]}: {totaisPorStatus[status]}
+                {t('report.status_count', { status: statusLabels[status], count: totaisPorStatus[status] })}
               </Text>
             );
           })}
@@ -106,13 +134,15 @@ export default function Relatorio() {
           return (
             <View style={[styles.section, { backgroundColor: colors.input }]}>
               <Text style={[styles.statusTitle, { color: colors.text }]}>
-                {statusLabels[status]}: {motosFiltradas.length}
+                {t('report.status_count', { status: statusLabels[status], count: motosFiltradas.length })}
               </Text>
               <View style={styles.motosList}>
                 {motosFiltradas.map((moto) => (
                   <View key={moto.id} style={[styles.motoItem, { backgroundColor: colors.background, borderLeftColor: colors.button }]}>
                     <Text style={[styles.motoPlaca, { color: colors.text }]}>{moto.placa}</Text>
-                    <Text style={[styles.motoPosicao, { color: colors.text }]}>Posição: {moto.posicao}</Text>
+                    <Text style={[styles.motoPosicao, { color: colors.text }]}>
+                      {t('report.position', { position: moto.posicao })}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -121,16 +151,22 @@ export default function Relatorio() {
         }}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={[styles.emptyText, { color: colors.text }]}>Nenhuma moto cadastrada</Text>
+            <Text style={[styles.emptyText, { color: colors.text }]}>
+              {t('report.empty')}
+            </Text>
             <TouchableOpacity onPress={carregarMotos} style={[styles.retryButton, { backgroundColor: colors.button }]}>
-              <Text style={[styles.retryButtonText, { color: colors.buttonText }]}>Tentar novamente</Text>
+              <Text style={[styles.retryButtonText, { color: colors.buttonText }]}>
+                {t('report.retry')}
+              </Text>
             </TouchableOpacity>
           </View>
         }
       />
 
       <TouchableOpacity style={[styles.addButton, { backgroundColor: colors.button }]} onPress={() => router.push('/HomeScreen')}>
-        <Text style={[styles.addButtonText, { color: colors.buttonText }]}>Voltar ao menu</Text>
+        <Text style={[styles.addButtonText, { color: colors.buttonText }]}>
+          {t('report.buttons.back_menu')}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -139,6 +175,9 @@ export default function Relatorio() {
 const styles = StyleSheet.create({
   container: { padding: 20, flex: 1 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  buttonsContainer: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginBottom: 10, marginTop: 10 },
+  languageButton: { padding: 10, backgroundColor: '#2563eb', borderRadius: 8 },
+  languageText: { color: '#fff', fontWeight: 'bold' },
   loadingText: { marginTop: 12, fontSize: 16 },
   title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
   themeButton: { padding: 12, borderRadius: 10, marginBottom: 12, alignItems: 'center' },

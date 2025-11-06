@@ -21,9 +21,9 @@ function ThemedDrawer() {
         drawerStyle: { backgroundColor: colors.background },
       }}
     >
-      {/* feito */}
+
       <Drawer.Screen name="index" options={{headerShown: false, drawerItemStyle: { display: 'none' }}}/>
-      {/* feito*/}
+
       <Drawer.Screen name="CadastrarScreen" options={{headerShown: false, drawerItemStyle: { display: 'none' }}}/>
 
       <Drawer.Screen
@@ -36,7 +36,7 @@ function ThemedDrawer() {
           ),
         }}
       />
-      {/* feito */}
+
       <Drawer.Screen
         name="Cadastro"
         options={{
@@ -47,7 +47,7 @@ function ThemedDrawer() {
           ),
         }}
       />
-      {/* feito */}
+
       <Drawer.Screen
         name="Patio"
         options={{
@@ -69,7 +69,7 @@ function ThemedDrawer() {
           ),
         }}
       />
-      {/* feito */}
+
       <Drawer.Screen
         name="Desenvolvedores"
         options={{
@@ -80,7 +80,7 @@ function ThemedDrawer() {
           ),
         }}
       />
-      {/* feito */}
+
       <Drawer.Screen
         name="Usuario"
         options={{

@@ -186,5 +186,29 @@
       "load_error": "No se pudieron cargar las motos",
       "update_error": "No se pudo actualizar la moto"
     }
+  },
+  "report": {
+    "title": "📊 Informe de Motos por Estado",
+    "loading": "Cargando informe...",
+    "total_registered": "Total de motos registradas: {{count}}",
+    "empty": "Ninguna moto registrada",
+    "retry": "Intentar de nuevo",
+    "position": "Posición: {{position}}",
+    "buttons": {
+      "back_menu": "Volver al menú",
+      "theme_dark": "🌙 Modo Oscuro",
+      "theme_light": "🌞 Modo Claro"
+    },
+    "status": {
+      "pronta": "Lista",
+      "revisao": "Revisión",
+      "reservada": "Reservada",
+      "fora_de_servico": "Fuera de servicio"
+    },
+    "status_count": "{{status}}: {{count}}",
+    "alerts": {
+      "error": "Error",
+      "load_error": "No se pudieron cargar las motos para el informe"
+    }
   }
 }
