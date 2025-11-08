@@ -113,9 +113,9 @@
   },
   "patio": {
     "title": "Lista de Motocicletas",
-    "subtitle": "Total: {{count}} motos",
+    "subtitle": "Total: {{count}} motocicletas",
     "buttons": {
-      "create": "Registrar nueva moto",
+      "create": "Registrar motocicleta nueva",
       "retry": "Intentar de nuevo",
       "theme_dark": "🌙 Modo Oscuro",
       "theme_light": "🌞 Modo Claro",
@@ -134,12 +134,12 @@
     },
     "alerts": {
       "error_title": "Error",
-      "error_load": "No se pudieron cargar las motos.",
-      "error_delete": "No se pudo eliminar la moto.",
+      "error_load": "No se pudieron cargar las motocicletas.",
+      "error_delete": "No se pudo eliminar la motocicleta.",
       "success_title": "Éxito",
-      "success_delete": "¡Moto eliminada con éxito!",
+      "success_delete": "¡Motocicleta eliminada con éxito!",
       "confirm_delete_title": "Confirmar eliminación",
-      "confirm_delete_message": "¿Está seguro de que desea eliminar esta moto?"
+      "confirm_delete_message": "¿Está seguro de que desea eliminar esta motocicleta?"
     },
     "empty": {
       "message": "No hay motos registradas."
@@ -152,20 +152,20 @@
     }
   },
   "dashboard": {
-    "title": "📍 Panel de Motos",
-    "subtitle": "Total: {{count}} motos",
-    "loading": "Cargando motos...",
-    "empty": "No se encontraron motos",
+    "title": "📍 Panel de Motocicleta",
+    "subtitle": "Total: {{count}} motocicletas",
+    "loading": "Cargando motocicletas...",
+    "empty": "No se encontraron motocicletas",
     "retry": "Intentar de nuevo",
     "buttons": {
-      "new_moto": "+ Nueva Moto",
-      "view_all": "Ver todas",
+      "new_moto": "+ Nueva Motocicletas",
+      "view_all": "Ver todo",
       "cancel": "Cancelar",
       "theme_dark": "🌙 Modo Oscuro",
       "theme_light": "☀️ Modo Claro"
     },
     "modal": {
-      "title": "Editar Moto",
+      "title": "Editar Motocicleta",
       "plate": "Placa: {{plate}}",
       "current_status": "Estado actual: {{status}}",
       "new_position": "Nueva Posición:",
@@ -181,17 +181,17 @@
     },
     "alerts": {
       "success": "Éxito",
-      "success_message": "¡Moto {{plate}} actualizada!\nEstado: {{status}}\nPosición: {{position}}",
+      "success_message": "¡Motocicleta {{plate}} actualizada!\nEstado: {{status}}\nPosición: {{position}}",
       "error": "Error",
-      "load_error": "No se pudieron cargar las motos",
-      "update_error": "No se pudo actualizar la moto"
+      "load_error": "No se pudieron cargar las motocicletas",
+      "update_error": "No se pudo actualizar la motocicleta"
     }
   },
   "report": {
-    "title": "📊 Informe de Motos por Estado",
+    "title": "📊 Informe de Motocicleta por Estado",
     "loading": "Cargando informe...",
-    "total_registered": "Total de motos registradas: {{count}}",
-    "empty": "Ninguna moto registrada",
+    "total_registered": "Total de motocicletas registradas: {{count}}",
+    "empty": "Ninguna motocicleta registrada",
     "retry": "Intentar de nuevo",
     "position": "Posición: {{position}}",
     "buttons": {
@@ -208,7 +208,7 @@
     "status_count": "{{status}}: {{count}}",
     "alerts": {
       "error": "Error",
-      "load_error": "No se pudieron cargar las motos para el informe"
+      "load_error": "No se pudieron cargar las motocicletas para el informe"
     }
   }
 }

@@ -167,7 +167,7 @@ const PatioGrid: React.FC = () => {
       </View>
 
       <Text style={[styles.title, { color: colors.text }]}>{t('dashboard.title')}</Text>
-      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+      <Text style={[styles.subtitle, { color: colors.text }]}>
         {t('dashboard.subtitle', { count: motos.length })}
       </Text>
 
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
     gap: 10,
     marginBottom: 10,

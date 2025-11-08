@@ -65,12 +65,23 @@ export default function Usuario() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
 
-      {/* 🔄 Botão de idioma */}
-      <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
-        <Text style={styles.languageText}>
-          {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
-        </Text>
-      </TouchableOpacity>
+      {/* 🔄 Botões de idioma e tema */}
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+          <Text style={styles.languageText}>
+            {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.themeButton, { backgroundColor: colors.button }]} 
+          onPress={toggleTheme}
+        >
+          <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
+            {theme === 'light' ? '🌙' : '☀️'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <Text style={[styles.titulo, { color: colors.text }]}>{t('user.title')}</Text>
       
@@ -78,17 +89,6 @@ export default function Usuario() {
         <Text style={[styles.label, { color: colors.text }]}>{t('user.connected_with')}</Text>
         <Text style={[styles.valor, { color: colors.text }]}>{email}</Text>
       </View>
-
-      {/* Botão de alternar tema */}
-      <TouchableOpacity 
-        style={[styles.botao, { backgroundColor: colors.button }]} 
-        onPress={toggleTheme}
-      >
-        <Text style={[styles.textoBotao, { color: colors.buttonText }]}>
-          {theme === "light" ? 
-            t('user.buttons.toggle_theme_light') : t('user.buttons.toggle_theme_dark')}
-        </Text>
-      </TouchableOpacity>
 
       <TouchableOpacity style={[styles.botao, { backgroundColor: '#2563eb' }]} onPress={realizarLogoff}>
         <Text style={styles.textoBotao}>{t('user.buttons.logout')}</Text>
@@ -108,16 +108,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  languageButton: {
+  buttonsContainer: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
     position: 'absolute',
     top: 50,
+    left: 20,
     right: 20,
-    padding: 8,
+    gap: 10,
+  },
+  languageButton: {
+    padding: 10,
     backgroundColor: '#2563eb',
     borderRadius: 8,
   },
   languageText: {
     color: '#fff',
+    fontWeight: 'bold',
+  },
+  themeButton: { 
+    padding: 10, 
+    borderRadius: 8, 
+    alignItems: 'center',
+  },
+  themeButtonText: { 
+    fontSize: 16, 
     fontWeight: 'bold',
   },
   titulo: {
@@ -149,5 +165,6 @@ const styles = StyleSheet.create({
   textoBotao: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff',
   }
 });

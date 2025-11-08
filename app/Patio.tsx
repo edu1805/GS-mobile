@@ -109,23 +109,22 @@ export default function Patio() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-
-      {/* 🔄 Botão de idioma */}
-      <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
-        <Text style={styles.languageText}>
-          {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
-        </Text>
-      </TouchableOpacity>
-
-      {/* Botão de alternar tema */}
-      <TouchableOpacity 
-        style={[styles.themeButton, { backgroundColor: colors.button }]}
-        onPress={toggleTheme}
-      >
-        <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
-          {theme === 'light' ? t('patio.buttons.theme_dark') : t('patio.buttons.theme_light')}
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.buttonsContainer}>
+              <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+                <Text style={styles.languageText}>
+                  {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+                </Text>
+              </TouchableOpacity>
+      
+              <TouchableOpacity 
+                style={[styles.themeButton, { backgroundColor: colors.button }]} 
+                onPress={toggleTheme}
+              >
+                <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
+                  {theme === "light" ? '🌙' : '☀️'}
+                </Text>
+              </TouchableOpacity>
+            </View>
 
       <View style={[styles.header, { backgroundColor: colors.button }]}>
         <Text style={[styles.titulo, { color: colors.buttonText }]}>{t('patio.title')}</Text>
@@ -181,6 +180,7 @@ export default function Patio() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
+  buttonsContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginBottom: 20,},
   languageButton: { position: 'absolute', top: 30, right: 20, padding: 8, backgroundColor: '#2563eb', borderRadius: 8},
   languageText: { color: '#fff', fontWeight: 'bold'},
   themeButton: { position: 'absolute', top: 25, left: 20, padding: 12, borderRadius: 10, alignItems: 'center' },

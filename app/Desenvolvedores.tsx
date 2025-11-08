@@ -51,7 +51,7 @@ export default function Integrantes() {
           onPress={toggleTheme}
         >
           <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
-            {theme === "light" ? t('patio.buttons.theme_dark') : t('patio.buttons.theme_light')}
+            {theme === "light" ? '🌙' : '☀️'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
     gap: 10,
     marginBottom: 10,

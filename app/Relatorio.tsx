@@ -175,7 +175,7 @@ export default function Relatorio() {
 const styles = StyleSheet.create({
   container: { padding: 20, flex: 1 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  buttonsContainer: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginBottom: 10, marginTop: 10 },
+  buttonsContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginBottom: 10, marginTop: 10 },
   languageButton: { padding: 10, backgroundColor: '#2563eb', borderRadius: 8 },
   languageText: { color: '#fff', fontWeight: 'bold' },
   loadingText: { marginTop: 12, fontSize: 16 },

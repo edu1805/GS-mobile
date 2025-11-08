@@ -1,11 +1,12 @@
 import { Link, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import api from '../src/services/api';
 import { MotoStatus } from '../src/types/Moto';
 import { useTheme } from '../src/context/ThemeContext'; 
 import { useTranslation } from 'react-i18next';
+import notificationService from '../src/services/NotificationService';
 
 export default function Cadastro() {
   const router = useRouter();
@@ -21,19 +22,39 @@ export default function Cadastro() {
     i18n.changeLanguage(novoIdioma);
   };
 
+  // Solicitar permissões ao montar o componente
+  useEffect(() => {
+    notificationService.requestPermissions();
+  }, []);
+
   const handleChange = (field: string, value: string) => {
     setMoto((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
-    if (!moto.placa.trim()) { Alert.alert(
-      t('motoRegister.alerts.warning'), t('motoRegister.alerts.fill_plate')); return; }
+    if (!moto.placa.trim()) { 
+      Alert.alert(
+        t('motoRegister.alerts.warning'), 
+        t('motoRegister.alerts.fill_plate')
+      ); 
+      return; 
+    }
 
-    if (!moto.posicao.trim()) { Alert.alert(
-      t('motoRegister.alerts.warning'), 'motoRegister.alerts.fill_position'); return; }
+    if (!moto.posicao.trim()) { 
+      Alert.alert(
+        t('motoRegister.alerts.warning'), 
+        t('motoRegister.alerts.fill_position')
+      ); 
+      return; 
+    }
 
-    if (!moto.status) { Alert.alert(
-      t('motoRegister.alerts.warning'), t('motoRegister.alerts.select_status')); return; }
+    if (!moto.status) { 
+      Alert.alert(
+        t('motoRegister.alerts.warning'), 
+        t('motoRegister.alerts.select_status')
+      ); 
+      return; 
+    }
 
     try {
       setLoading(true);
@@ -47,19 +68,41 @@ export default function Cadastro() {
 
       const response = await api.post('/motos/criar', dadosMoto);
 
+      // 🔔 Enviar notificação local
+      await notificationService.sendMotoRegisteredNotification(
+        dadosMoto.placa,
+        dadosMoto.posicao,
+        getStatusLabel(moto.status)
+      );
+
       Alert.alert(
         t('motoRegister.alerts.success_title'),
-        t('motoRegister.alerts.success_message', {plate: moto.placa, position: moto.posicao, status: getStatusLabel(moto.status)}),
-        [{ text: 'OK', onPress: () => { setMoto({ placa: '', posicao: '', status: '' as MotoStatus }); router.push('/HomeScreen'); } }]
+        t('motoRegister.alerts.success_message', {
+          plate: moto.placa, 
+          position: moto.posicao, 
+          status: getStatusLabel(moto.status)
+        }),
+        [{ 
+          text: 'OK', 
+          onPress: () => { 
+            setMoto({ placa: '', posicao: '', status: '' as MotoStatus }); 
+            router.push('/HomeScreen'); 
+          } 
+        }]
       );
 
     } catch (error: any) {
-      let errorMessage = t('motoRegister.alert.error_title');
+      let errorMessage = t('motoRegister.alerts.error_title');
       if (error.response) {
-        if (error.response.status === 400) errorMessage = t('motoRegister.alert.error_invalid');
-        else if (error.response.status === 409) errorMessage = t('motoRegister.alert.error_conflict');
-        else errorMessage = `Erro ${error.response.status}: ${error.response.data?.message || t('motoRegister.alert.error_server')}`;
-      } else if (error.request) errorMessage = t('motoRegister.alert.error_connection');
+        if (error.response.status === 400) 
+          errorMessage = t('motoRegister.alerts.error_invalid');
+        else if (error.response.status === 409) 
+          errorMessage = t('motoRegister.alerts.error_conflict');
+        else 
+          errorMessage = `Erro ${error.response.status}: ${error.response.data?.message || t('motoRegister.alerts.error_server')}`;
+      } else if (error.request) {
+        errorMessage = t('motoRegister.alerts.error_connection');
+      }
       Alert.alert('Erro', errorMessage);
     } finally {
       setLoading(false);
@@ -79,17 +122,19 @@ export default function Cadastro() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
 
-      {/* 🔄 Botão de idioma */}
-      <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
-        <Text style={styles.languageText}>
-          {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
+          <Text style={styles.languageText}>
+            {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+          </Text>
+        </TouchableOpacity>
 
-      {/* Botão de alternar tema */}
-      <Pressable style={[styles.themeButton, { backgroundColor: colors.button }]} onPress={toggleTheme}>
-        <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>{theme === 'light' ? t('motoRegister.buttons.theme_dark') : t('motoRegister.buttons.theme_light')}</Text>
-      </Pressable>
+        <Pressable style={[styles.themeButton, { backgroundColor: colors.button }]} onPress={toggleTheme}>
+          <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
+            {theme === 'light' ? '🌙' : '☀️'}
+          </Text>
+        </Pressable>
+      </View>
 
       <Text style={[styles.titulo, { color: colors.text }]}>{t('motoRegister.title')}</Text>
 
@@ -131,13 +176,27 @@ export default function Cadastro() {
         disabled={loading}
       />
 
-      <Pressable style={[styles.botao, loading && styles.botaoDisabled, { backgroundColor: colors.button }]} onPress={handleSubmit} disabled={loading}>
-        {loading ? <ActivityIndicator color={colors.buttonText} /> : <Text style={[styles.botaoTexto, { color: colors.buttonText }]}>{t('motoRegister.buttons.register')}</Text>}
+      <Pressable 
+        style={[styles.botao, loading && styles.botaoDisabled, { backgroundColor: colors.button }]} 
+        onPress={handleSubmit} 
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color={colors.buttonText} />
+        ) : (
+          <Text style={[styles.botaoTexto, { color: colors.buttonText }]}>
+            {t('motoRegister.buttons.register')}
+          </Text>
+        )}
       </Pressable>
 
       <View style={styles.links}>
-        <Link href="/Patio" style={[styles.linkTexto, { color: colors.button }]}>{t('motoRegister.links.view_all')}</Link>
-        <Link href="/HomeScreen" style={[styles.linkTexto, { color: colors.button }]}>{t('motoRegister.links.back_menu')}</Link>
+        <Link href="/Patio" style={[styles.linkTexto, { color: colors.button }]}>
+          {t('motoRegister.links.view_all')}
+        </Link>
+        <Link href="/HomeScreen" style={[styles.linkTexto, { color: colors.button }]}>
+          {t('motoRegister.links.back_menu')}
+        </Link>
       </View>
     </View>
   );
@@ -145,7 +204,8 @@ export default function Cadastro() {
 
 const styles = StyleSheet.create({
   container: { padding: 24, flex: 1, justifyContent: 'center' },
-  languageButton: { position: 'absolute', top: 50, right: 20, padding: 8, backgroundColor: '#2563eb', borderRadius: 8},
+  buttonsContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', position: 'absolute', top: 50, left: 20, right: 20, gap: 10},
+  languageButton: { padding: 8, backgroundColor: '#2563eb', borderRadius: 8},
   languageText: { color: '#fff', fontWeight: 'bold'},
   titulo: { fontSize: 26, fontWeight: 'bold', marginBottom: 24, textAlign: 'center' },
   input: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 15, paddingVertical: 12, fontSize: 16, marginBottom: 16 },
