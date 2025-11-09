@@ -46,6 +46,14 @@
           "color": "#ffffff"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3bb1483b-9946-492a-a96d-e64d4c5a1ed5"
+      }
+    }
   }
 }

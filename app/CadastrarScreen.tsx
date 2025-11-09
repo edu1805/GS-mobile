@@ -36,7 +36,7 @@ export default function CadastroScreen() {
         const user = userCredential.user
         console.log(user)
         await AsyncStorage.setItem('@user',JSON.stringify(user))
-        Alert.alert(t('register.alertsCreate.sucess_create'))
+        Alert.alert(t('register.alertsCreate.success_create'))
         router.push("/HomeScreen")
       })
       .catch((error) => {
