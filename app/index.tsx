@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { login } from "../src/services/auth"; // ✅ Importa a função, não o hook
+import { login } from "../src/services/auth";
+import { useTheme } from "../src/context/ThemeContext"; // ✅ Importa a função, não o hook
 import React from "react";
 
 export default function LoginScreen() {
@@ -10,6 +11,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const { colors } = useTheme();
   const router = useRouter();
 
   async function handleLogin() {
@@ -63,6 +65,16 @@ export default function LoginScreen() {
           {loading ? "Entrando..." : "Entrar"}
         </Text>
       </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.cadastroButton} 
+        onPress={() => router.push('/CadastrarScreen')}
+      >
+        <Text style={[styles.cadastroText, { color: colors.button }]}>
+          Não tem uma conta? Cadastre-se
+        </Text>
+      </TouchableOpacity>
+
     </View>
   );
 }
@@ -100,5 +112,14 @@ const styles = StyleSheet.create({
   error: {
     color: "red",
     marginBottom: 10,
-  }
+  },
+  cadastroButton: {
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  cadastroText: {
+    fontSize: 16,
+    textDecorationLine: 'underline',
+  },
 });

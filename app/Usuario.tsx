@@ -43,7 +43,7 @@ export default function Usuario() {
 
   // Função para ir para configurações
   const irParaConfiguracoes = () => {
-    router.push('/configuracoes');
+    router.push('/Configuracoes');
   };
 
   return (

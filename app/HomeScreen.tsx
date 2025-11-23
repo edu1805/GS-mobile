@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
-import { useRouter, useFocusEffect } from "expo-router"; // ✅ Adicione useFocusEffect
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Alert } from "react-native";
+import { useRouter, useFocusEffect } from "expo-router";
 import { logout, getUser, getCheckins } from "../src/services/auth";
+import api from "../src/services/api";
 import React from "react";
 
 type Checkin = {
@@ -17,9 +18,9 @@ export default function HomeScreen() {
   const [username, setUsername] = useState("");
   const [checkins, setCheckins] = useState<Checkin[]>([]);
   const [loading, setLoading] = useState(true);
+  const [generatingId, setGeneratingId] = useState<number | null>(null);
   const router = useRouter();
 
-  // ✅ Substituir useEffect por useFocusEffect
   useFocusEffect(
     React.useCallback(() => {
       loadData();
@@ -29,7 +30,6 @@ export default function HomeScreen() {
   async function loadData() {
     setLoading(true);
     
-    // Carrega usuário
     const user = await getUser();
     if (user) {
       setUsername(user.username);
@@ -38,7 +38,6 @@ export default function HomeScreen() {
       return;
     }
 
-    // Carrega check-ins
     const result = await getCheckins();
     if (result.success) {
       setCheckins(result.checkins);
@@ -52,7 +51,38 @@ export default function HomeScreen() {
     router.replace("/");
   }
 
-  // Tradução dos valores
+  // ✅ Nova função para gerar mensagem
+  async function gerarMensagem(checkinId: number) {
+  try {
+    setGeneratingId(checkinId);
+    console.log('🤖 Gerando mensagem para check-in:', checkinId);
+
+    const response = await api.post(`/api/checkins/${checkinId}/generate-message`);
+    
+    console.log('✅ Mensagem gerada:', response.data);
+
+    // ✅ CORREÇÃO: O campo na resposta é "message", não "generatedMessage"
+    const mensagemGerada = response.data.message;
+
+    // Atualiza o check-in específico na lista
+    setCheckins(prevCheckins =>
+      prevCheckins.map(checkin =>
+        checkin.id === checkinId
+          ? { ...checkin, generatedMessage: mensagemGerada } // ✅ Atualiza com o campo correto
+          : checkin
+      )
+    );
+
+    Alert.alert('Sucesso!', 'Recomendação gerada com sucesso!');
+
+  } catch (error: any) {
+    console.log('❌ Erro ao gerar mensagem:', error.response?.data || error.message);
+    Alert.alert('Erro', 'Não foi possível gerar a recomendação. Tente novamente.');
+  } finally {
+    setGeneratingId(null);
+  }
+}
+
   const getMoodEmoji = (mood: string) => {
     const moods: { [key: string]: string } = {
       HAPPY: "😊",
@@ -96,11 +126,26 @@ export default function HomeScreen() {
         <Text style={styles.notes}>{item.notes}</Text>
       )}
 
-      {item.generatedMessage && (
+      {/* ✅ Mostra mensagem se existir */}
+      {item.generatedMessage ? (
         <View style={styles.messageBox}>
           <Text style={styles.messageTitle}>💡 Recomendação:</Text>
           <Text style={styles.message}>{item.generatedMessage}</Text>
         </View>
+      ) : (
+        // ✅ Botão para gerar mensagem se não existir
+        <TouchableOpacity
+          style={[
+            styles.generateButton,
+            generatingId === item.id && styles.generateButtonDisabled
+          ]}
+          onPress={() => gerarMensagem(item.id)}
+          disabled={generatingId === item.id}
+        >
+          <Text style={styles.generateButtonText}>
+            {generatingId === item.id ? '🤖 Gerando...' : '🤖 Gerar Recomendação'}
+          </Text>
+        </TouchableOpacity>
       )}
     </View>
   );
@@ -124,7 +169,6 @@ export default function HomeScreen() {
 
       <Text style={styles.subtitle}>Seus Check-ins</Text>
 
-      {/* ✅ Botão para adicionar check-in */}
       <TouchableOpacity 
         style={styles.addButton} 
         onPress={() => router.push("/Cadastro")}
@@ -187,7 +231,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 10,
   },
-  // ✅ Novo estilo para o botão
   addButton: {
     backgroundColor: "#0066FF",
     marginHorizontal: 20,
@@ -262,6 +305,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#333",
     lineHeight: 20,
+  },
+  // ✅ Novos estilos para o botão de gerar mensagem
+  generateButton: {
+    backgroundColor: "#4CAF50",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  generateButtonDisabled: {
+    backgroundColor: "#ccc",
+  },
+  generateButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
   },
   emptyContainer: {
     flex: 1,

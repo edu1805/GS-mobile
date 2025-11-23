@@ -1,180 +1,175 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../src/services/firebaseConfig'
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useTranslation } from 'react-i18next';
 import { useTheme } from '../src/context/ThemeContext';
+import api from '../src/services/api';
 
 export default function CadastroScreen() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const { colors } = useTheme();
+  const router = useRouter();
 
-  const { t, i18n } = useTranslation();
-
-  const alternarIdioma = () => {
-    const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
-    i18n.changeLanguage(novoIdioma);
-  };
-
-  // Estados para armazenar os valores digitados
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const { theme, toggleTheme, colors } = useTheme();
-
-  const router = useRouter() // Hook para navegação
-
-  // Função para simular o envio do formulário
-  const handleCadastro = () => {
-    if (!nome || !email || !senha) {
-      Alert.alert(t('alerts.warning'), t('alerts.fill_fields'));
+  const handleCadastro = async () => {
+    // Validações
+    if (!username || !password || !confirmPassword) {
+      Alert.alert('Atenção', 'Preencha todos os campos');
       return;
     }
-    //Criação do usuário com email e senha
-    createUserWithEmailAndPassword(auth, email, senha)
-      .then(async(userCredential) => {
-        const user = userCredential.user
-        console.log(user)
-        await AsyncStorage.setItem('@user',JSON.stringify(user))
-        Alert.alert(t('register.alertsCreate.success_create'))
-        router.push("/HomeScreen")
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorMessage)
-        Alert.alert(t('register.alertsCreate.error_create'))
-      });
+
+    if (username.length < 3) {
+      Alert.alert('Atenção', 'O nome de usuário deve ter pelo menos 3 caracteres');
+      return;
     }
 
-    return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+    if (password.length < 6) {
+      Alert.alert('Atenção', 'A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
 
-      {/* 🔄 Botão de idioma */}
-      <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
-        <Text style={[styles.languageText, { color: colors.text }]}>
-          {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
-        </Text>
-      </TouchableOpacity>
+    if (password !== confirmPassword) {
+      Alert.alert('Atenção', 'As senhas não coincidem');
+      return;
+    }
 
+    try {
+      setLoading(true);
+
+      console.log('📝 Criando usuário:', { username });
+
+      const response = await api.post('/auth/register', {
+        username: username,
+        password: password
+      });
+
+      console.log('✅ Usuário criado:', response.data);
+
+      Alert.alert(
+        'Sucesso!',
+        'Conta criada com sucesso! Faça login para continuar.',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/')
+          }
+        ]
+      );
+
+    } catch (error: any) {
+      console.log('❌ Erro ao criar conta:', error.response?.data || error.message);
+      
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data || 
+                          'Erro ao criar conta. Tente novamente.';
+      
+      Alert.alert('Erro', errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.titulo, { color: colors.text }]}>
-        {t('register.title')}
+        Criar Conta
+      </Text>
+
+      <Text style={[styles.subtitulo, { color: colors.placeHolderTextColor }]}>
+        Cadastre-se no WellWork
       </Text>
 
       <TextInput
         style={[styles.input, { backgroundColor: colors.input, color: colors.text }]}
-        placeholder={t('register.placeholders.name')}
-        placeholderTextColor={theme === 'light' ? '#7c7c7c' : '#aaa'}
-        value={nome}
-        onChangeText={setNome}
-      />
-
-      <TextInput
-        style={[styles.input, { backgroundColor: colors.input, color: colors.text }]}
-        placeholder={t('register.placeholders.email')}
-        placeholderTextColor={theme === 'light' ? '#7c7c7c' : '#aaa'}
-        keyboardType="email-address"
+        placeholder="Nome de usuário"
+        placeholderTextColor={colors.placeHolderTextColor}
+        value={username}
+        onChangeText={setUsername}
         autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
       />
 
       <TextInput
         style={[styles.input, { backgroundColor: colors.input, color: colors.text }]}
-        placeholder={t('register.placeholders.password')}
-        placeholderTextColor={theme === 'light' ? '#7c7c7c' : '#aaa'}
+        placeholder="Senha"
+        placeholderTextColor={colors.placeHolderTextColor}
         secureTextEntry
-        value={senha}
-        onChangeText={setSenha}
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      <TextInput
+        style={[styles.input, { backgroundColor: colors.input, color: colors.text }]}
+        placeholder="Confirmar senha"
+        placeholderTextColor={colors.placeHolderTextColor}
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
       />
 
       <TouchableOpacity 
         style={[styles.botao, { backgroundColor: colors.button }]} 
         onPress={handleCadastro}
+        disabled={loading}
       >
         <Text style={[styles.textoBotao, { color: colors.buttonText }]}>
-          {t('register.buttons.register')}
+          {loading ? 'Criando conta...' : 'Cadastrar'}
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
-        style={[styles.botaoVoltar, { backgroundColor: colors.button }]} 
-        onPress={() => router.push('/')}
+        style={styles.botaoVoltar} 
+        onPress={() => router.back()}
       >
-        <Text style={[styles.textoBotao, { color: colors.buttonText }]}>
-          {t('register.buttons.back')}
-        </Text>
-      </TouchableOpacity>
-
-      {/* 🌙/☀️ Botão de tema */}
-      <TouchableOpacity 
-        style={[styles.botao, { backgroundColor: colors.button }]} 
-        onPress={toggleTheme}
-      >
-        <Text style={[styles.textoBotao, { color: colors.buttonText }]}>
-          {theme === "light" 
-            ? t('user.buttons.toggle_theme_light') 
-            : t('user.buttons.toggle_theme_dark')}
+        <Text style={[styles.textoVoltar, { color: colors.button }]}>
+          Já tem uma conta? Faça login
         </Text>
       </TouchableOpacity>
     </View>
-    );
-  }
+  );
+}
 
-  // Estilização
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#dadadaff',
-      justifyContent: 'center',
-      padding: 20,
-    },
-    languageButton: {
-      position: 'absolute',
-      top: 50,
-      right: 20,
-      padding: 8,
-      backgroundColor: '#2563eb',
-      borderRadius: 8,
-    },
-    languageText: {
-      color: '#fff',
-      fontWeight: 'bold',
-    },
-    titulo: {
-      fontSize: 28,
-      fontWeight: 'bold',
-      color: '#252525ff',
-      marginBottom: 30,
-      textAlign: 'center',
-    },
-    input: {
-      backgroundColor: '#ffffffff',
-      color: '#000000ff',
-      borderRadius: 10,
-      padding: 15,
-      marginBottom: 15,
-      fontSize: 16,
-      borderWidth: 1,
-      borderColor: '#008d47ff',
-    },
-    botao: {
-      backgroundColor: '#00B37E',
-      padding: 15,
-      borderRadius: 10,
-      alignItems: 'center',
-      marginBottom: 10
-    },
-    botaoVoltar: {
-      backgroundColor: '#0048b3ff',
-      padding: 15,
-      borderRadius: 10,
-      alignItems: 'center',
-      marginBottom: 10
-    },
-    textoBotao: {
-      color: '#fff',
-      fontSize: 18,
-      fontWeight: 'bold',
-    },
-  });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  titulo: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  subtitulo: {
+    fontSize: 16,
+    marginBottom: 40,
+    textAlign: 'center',
+  },
+  input: {
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+  botao: {
+    padding: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  textoBotao: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  botaoVoltar: {
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  textoVoltar: {
+    fontSize: 16,
+    textDecorationLine: 'underline',
+  },
+});

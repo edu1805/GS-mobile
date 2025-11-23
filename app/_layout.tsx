@@ -40,8 +40,8 @@ function ThemedDrawer() {
       <Drawer.Screen
         name="Cadastro"
         options={{
-          title: "Cadastrar moto",
-          drawerLabel: "Cadastro de Moto",
+          title: "Cadastrar CheckIn",
+          drawerLabel: "Cadastro de checkIn",
           drawerIcon: ({ color, size }) => (
             <Ionicons name="add-circle-outline" size={size} color={color} />
           ),
@@ -49,23 +49,12 @@ function ThemedDrawer() {
       />
 
       <Drawer.Screen
-        name="Patio"
+        name="Configuracoes"
         options={{
-          title: "Motos",
-          drawerLabel: "Ver Todas as Motos",
+          title: "Configurações",
+          drawerLabel: "Configurações",
           drawerIcon: ({ color, size }) => (
             <Ionicons name="bicycle-outline" size={size} color={color} />
-          ),
-        }}
-      />
-
-      <Drawer.Screen
-        name="Relatorio"
-        options={{
-          title: "Relatório geral",
-          drawerLabel: "Relatório",
-          drawerIcon: ({ color, size }) => (
-            <Ionicons name="stats-chart-outline" size={size} color={color} />
           ),
         }}
       />
