@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Dashboard",
-    "slug": "Dashboard",
+    "name": "WellWork",
+    "slug": "WellWorkApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "scheme": "Dashboard",
+    "scheme": "WellWorkApp",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",

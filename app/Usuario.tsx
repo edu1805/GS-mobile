@@ -1,160 +1,118 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { auth } from '../src/services/firebaseConfig';
-import { deleteUser } from 'firebase/auth';
-import { useTheme } from '../src/context/ThemeContext'; 
-import { useTranslation } from 'react-i18next';
+import { logout, getUser } from '../src/services/auth';
 
 export default function Usuario() {
-  const [email, setEmail] = useState<string | null>(null);
-  const [nome, setNome] = useState<string | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [userId, setUserId] = useState<number | null>(null);
   const router = useRouter();
-  const { theme, toggleTheme, colors } = useTheme();
-
-  const { t, i18n } = useTranslation();
-
-  const alternarIdioma = () => {
-    const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
-    i18n.changeLanguage(novoIdioma);
-  };
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      setEmail(user.email);
-      setNome(user.displayName);
-    }
+    loadUserData();
   }, []);
+
+  async function loadUserData() {
+    const user = await getUser();
+    if (user) {
+      setUsername(user.username);
+      setUserId(user.id);
+    } else {
+      router.replace('/');
+    }
+  }
 
   // Função para realizar logoff
   const realizarLogoff = async () => {
-    await AsyncStorage.removeItem('@user');
-    router.replace('/');
-  };
-
-  // Função para excluir conta
-  const excluirConta = () => {
-    Alert.alert(t('alertsUser.delete_title'),t('alertsuser.delete_message'),
+    Alert.alert(
+      "Sair",
+      "Tem certeza que deseja sair?",
       [
-        { text: t('alertsUser.cancel'), style: "cancel" },
+        { text: "Cancelar", style: "cancel" },
         {
-          text: t('alertsUser.confirm_delete'), style: 'destructive',
+          text: "Sair",
+          style: "destructive",
           onPress: async () => {
-            try {
-              const user = auth.currentUser;
-              if (user) {
-                await deleteUser(user); // Apaga do Firebase Auth
-                await AsyncStorage.removeItem('@user');
-                Alert.alert(t('alertsUser.deleted'), t('deleted_message'));
-                router.replace('/');
-              } else {
-                Alert.alert(t('alerts.error'), t('alertsUser.no_user'));
-              }
-            } catch (error) {
-              console.log("Erro ao excluir conta:", error);
-              Alert.alert(t('alerts.error'), t('alertsUser.delete_error'));
-            }
+            await logout();
+            router.replace('/');
           }
         }
       ]
     );
   };
 
+  // Função para ir para configurações
+  const irParaConfiguracoes = () => {
+    router.push('/configuracoes');
+  };
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-
-      {/* 🔄 Botões de idioma e tema */}
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
-          <Text style={styles.languageText}>
-            {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[styles.themeButton, { backgroundColor: colors.button }]} 
-          onPress={toggleTheme}
-        >
-          <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
-            {theme === 'light' ? '🌙' : '☀️'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={[styles.titulo, { color: colors.text }]}>{t('user.title')}</Text>
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Perfil do Usuário</Text>
       
-      <View style={[styles.infoBox, { backgroundColor: colors.input }]}>
-        <Text style={[styles.label, { color: colors.text }]}>{t('user.connected_with')}</Text>
-        <Text style={[styles.valor, { color: colors.text }]}>{email}</Text>
+      <View style={styles.infoBox}>
+        <Text style={styles.label}>Nome de usuário</Text>
+        <Text style={styles.valor}>{username}</Text>
+        
+        {userId && (
+          <>
+            <Text style={[styles.label, { marginTop: 15 }]}>ID do usuário</Text>
+            <Text style={styles.valor}>#{userId}</Text>
+          </>
+        )}
       </View>
 
-      <TouchableOpacity style={[styles.botao, { backgroundColor: '#2563eb' }]} onPress={realizarLogoff}>
-        <Text style={styles.textoBotao}>{t('user.buttons.logout')}</Text>
+      <TouchableOpacity 
+        style={[styles.botao, { backgroundColor: '#0066FF' }]} 
+        onPress={irParaConfiguracoes}
+      >
+        <Text style={styles.textoBotao}>⚙️ Configurações</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.botao, { backgroundColor: '#dc2626' }]} onPress={excluirConta}>
-        <Text style={styles.textoBotao}>{t('user.buttons.delete_account')}</Text>
+      <TouchableOpacity 
+        style={[styles.botao, { backgroundColor: '#dc2626' }]} 
+        onPress={realizarLogoff}
+      >
+        <Text style={styles.textoBotao}>🚪 Sair da Conta</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-// Estilização
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-  },
-  buttonsContainer: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    right: 20,
-    gap: 10,
-  },
-  languageButton: {
-    padding: 10,
-    backgroundColor: '#2563eb',
-    borderRadius: 8,
-  },
-  languageText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  themeButton: { 
-    padding: 10, 
-    borderRadius: 8, 
-    alignItems: 'center',
-  },
-  themeButtonText: { 
-    fontSize: 16, 
-    fontWeight: 'bold',
+    backgroundColor: '#f5f5f5',
   },
   titulo: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: 'center',
+    color: '#333',
   },
   infoBox: {
+    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 12,
     marginBottom: 30,
-    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   label: {
-    fontSize: 16,
-    marginTop: 10,
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 5,
   },
   valor: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
+    color: '#333',
   },
   botao: {
     padding: 15,

@@ -1,220 +1,263 @@
-import { Link, useRouter } from 'expo-router';
-import React, { useState, useEffect } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, View, ActivityIndicator, TouchableOpacity } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
-import api from '../src/services/api';
-import { MotoStatus } from '../src/types/Moto';
-import { useTheme } from '../src/context/ThemeContext'; 
-import { useTranslation } from 'react-i18next';
-import notificationService from '../src/services/NotificationService';
+import { useState } from "react";
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  ScrollView,
+  Alert 
+} from "react-native";
+import { useRouter } from "expo-router";
+import { createCheckin } from "../src/services/auth";
+import React from "react";
 
-export default function Cadastro() {
-  const router = useRouter();
-  const { colors, theme, toggleTheme } = useTheme();
-
+export default function CheckinScreen() {
+  const [mood, setMood] = useState<number | null>(null);
+  const [energyLevel, setEnergyLevel] = useState<number | null>(null);
+  const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
-  const [moto, setMoto] = useState({ placa: '', posicao: '', status: '' as MotoStatus });
+  const router = useRouter();
 
-  const { t, i18n } = useTranslation();
-    
-  const alternarIdioma = () => {
-    const novoIdioma = i18n.language === 'pt' ? 'es' : 'pt';
-    i18n.changeLanguage(novoIdioma);
-  };
+  // Mapas de mood e energia
+  const moods = [
+    { value: 0, label: "Feliz", emoji: "😊" },
+    { value: 1, label: "Neutro", emoji: "😐" },
+    { value: 2, label: "Triste", emoji: "😢" },
+    { value: 3, label: "Estressado", emoji: "😠" },
+  ];
 
-  // Solicitar permissões ao montar o componente
-  useEffect(() => {
-    notificationService.requestPermissions();
-  }, []);
+  const energyLevels = [
+    { value: 2, label: "Baixa", icon: "🔋" },
+    { value: 1, label: "Média", icon: "🔋🔋" },
+    { value: 0, label: "Alta", icon: "🔋🔋🔋" },
+  ];
 
-  const handleChange = (field: string, value: string) => {
-    setMoto((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async () => {
-    if (!moto.placa.trim()) { 
-      Alert.alert(
-        t('motoRegister.alerts.warning'), 
-        t('motoRegister.alerts.fill_plate')
-      ); 
-      return; 
+  async function handleSubmit() {
+    if (mood === null) {
+      Alert.alert("Atenção", "Selecione seu humor");
+      return;
     }
 
-    if (!moto.posicao.trim()) { 
-      Alert.alert(
-        t('motoRegister.alerts.warning'), 
-        t('motoRegister.alerts.fill_position')
-      ); 
-      return; 
+    if (energyLevel === null) {
+      Alert.alert("Atenção", "Selecione seu nível de energia");
+      return;
     }
 
-    if (!moto.status) { 
-      Alert.alert(
-        t('motoRegister.alerts.warning'), 
-        t('motoRegister.alerts.select_status')
-      ); 
-      return; 
+    if (!notes.trim()) {
+      Alert.alert("Atenção", "Adicione uma observação");
+      return;
     }
 
     try {
       setLoading(true);
-      const ultimaAtualizacao = new Date().toISOString();
-      const dadosMoto = {
-        placa: moto.placa.toUpperCase().trim(),
-        posicao: moto.posicao.toUpperCase().trim(),
-        status: moto.status,
-        ultimaAtualizacao
-      };
 
-      const response = await api.post('/motos/criar', dadosMoto);
+      const result = await createCheckin(mood, energyLevel, notes);
 
-      // 🔔 Enviar notificação local
-      await notificationService.sendMotoRegisteredNotification(
-        dadosMoto.placa,
-        dadosMoto.posicao,
-        getStatusLabel(moto.status)
-      );
-
-      Alert.alert(
-        t('motoRegister.alerts.success_title'),
-        t('motoRegister.alerts.success_message', {
-          plate: moto.placa, 
-          position: moto.posicao, 
-          status: getStatusLabel(moto.status)
-        }),
-        [{ 
-          text: 'OK', 
-          onPress: () => { 
-            setMoto({ placa: '', posicao: '', status: '' as MotoStatus }); 
-            router.push('/HomeScreen'); 
-          } 
-        }]
-      );
-
-    } catch (error: any) {
-      let errorMessage = t('motoRegister.alerts.error_title');
-      if (error.response) {
-        if (error.response.status === 400) 
-          errorMessage = t('motoRegister.alerts.error_invalid');
-        else if (error.response.status === 409) 
-          errorMessage = t('motoRegister.alerts.error_conflict');
-        else 
-          errorMessage = `Erro ${error.response.status}: ${error.response.data?.message || t('motoRegister.alerts.error_server')}`;
-      } else if (error.request) {
-        errorMessage = t('motoRegister.alerts.error_connection');
+      if (result.success) {
+        Alert.alert("Sucesso!", "Check-in registrado com sucesso", [
+          {
+            text: "OK",
+            onPress: () => router.replace("/HomeScreen")
+          }
+        ]);
+      } else {
+        Alert.alert("Erro", result.error || "Erro ao criar check-in");
       }
-      Alert.alert('Erro', errorMessage);
+    } catch (error) {
+      Alert.alert("Erro", "Erro ao conectar com o servidor");
     } finally {
       setLoading(false);
     }
-  };
-
-  const getStatusLabel = (status: MotoStatus) => {
-    const labels: Record<MotoStatus, string> = {
-      pronta: t('motoRegister.statuses.ready'),
-      revisao: t('motoRegister.statuses.revision'),
-      reservada: t('motoRegister.statuses.reserved'),
-      'fora de serviço': t('motoRegister.statuses.out_of_service')
-    };
-    return labels[status] || status;
-  };
+  }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>Como você está se sentindo?</Text>
 
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
-          <Text style={styles.languageText}>
-            {i18n.language === 'pt' ? '🇧🇷 PT-BR' : '🇪🇸 ES'}
+        {/* Seleção de Humor */}
+        <Text style={styles.label}>Humor</Text>
+        <View style={styles.optionsContainer}>
+          {moods.map((item) => (
+            <TouchableOpacity
+              key={item.value}
+              style={[
+                styles.option,
+                mood === item.value && styles.optionSelected
+              ]}
+              onPress={() => setMood(item.value)}
+            >
+              <Text style={styles.emoji}>{item.emoji}</Text>
+              <Text style={[
+                styles.optionText,
+                mood === item.value && styles.optionTextSelected
+              ]}>
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Seleção de Energia */}
+        <Text style={styles.label}>Nível de Energia</Text>
+        <View style={styles.optionsContainer}>
+          {energyLevels.map((item) => (
+            <TouchableOpacity
+              key={item.value}
+              style={[
+                styles.energyOption,
+                energyLevel === item.value && styles.optionSelected
+              ]}
+              onPress={() => setEnergyLevel(item.value)}
+            >
+              <Text style={styles.energyIcon}>{item.icon}</Text>
+              <Text style={[
+                styles.optionText,
+                energyLevel === item.value && styles.optionTextSelected
+              ]}>
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Observações */}
+        <Text style={styles.label}>Observações</Text>
+        <TextInput
+          style={styles.textarea}
+          placeholder="Como foi seu dia? O que você está sentindo?"
+          value={notes}
+          onChangeText={setNotes}
+          multiline
+          numberOfLines={4}
+          textAlignVertical="top"
+        />
+
+        {/* Botões */}
+        <TouchableOpacity 
+          style={[styles.button, loading && styles.buttonDisabled]} 
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Salvando..." : "Registrar Check-in"}
           </Text>
         </TouchableOpacity>
 
-        <Pressable style={[styles.themeButton, { backgroundColor: colors.button }]} onPress={toggleTheme}>
-          <Text style={[styles.themeButtonText, { color: colors.buttonText }]}>
-            {theme === 'light' ? '🌙' : '☀️'}
-          </Text>
-        </Pressable>
+        <TouchableOpacity 
+          style={styles.cancelButton} 
+          onPress={() => router.replace("/HomeScreen")}
+        >
+          <Text style={styles.cancelButtonText}>Cancelar</Text>
+        </TouchableOpacity>
       </View>
-
-      <Text style={[styles.titulo, { color: colors.text }]}>{t('motoRegister.title')}</Text>
-
-      <TextInput
-        value={moto.placa}
-        onChangeText={(text) => handleChange('placa', text)}
-        style={[styles.input, { backgroundColor: colors.input, color: colors.text, borderColor: colors.border }]}
-        placeholder={t('motoRegister.placeholders.plate')}
-        placeholderTextColor={colors.placeholder}
-        autoCapitalize="characters"
-        maxLength={7}
-        editable={!loading}
-      />
-
-      <TextInput
-        value={moto.posicao}
-        onChangeText={(text) => handleChange('posicao', text)}
-        style={[styles.input, { backgroundColor: colors.input, color: colors.text, borderColor: colors.border }]}
-        placeholder={t('motoRegister.placeholders.position')}
-        placeholderTextColor={colors.placeholder}
-        autoCapitalize="characters"
-        editable={!loading}
-      />
-
-      <RNPickerSelect
-        onValueChange={(value) => handleChange('status', value)}
-        value={moto.status}
-        placeholder={{ label: t('motoRegister.placeholders.status'), value: null }}
-        items={[
-          { label: t('motoRegister.statuses.ready'), value: 'pronta' },
-          { label: t('motoRegister.statuses.revision'), value: 'revisao' },
-          { label: t('motoRegister.statuses.reserved'), value: 'reservada' },
-          { label: t('motoRegister.statuses.out_of_service'), value: 'fora de serviço' },
-        ]}
-        style={{
-          inputIOS: { ...styles.pickerInput, backgroundColor: colors.input, color: colors.text, borderColor: colors.border },
-          inputAndroid: { ...styles.pickerInput, backgroundColor: colors.input, color: colors.text, borderColor: colors.border },
-        }}
-        disabled={loading}
-      />
-
-      <Pressable 
-        style={[styles.botao, loading && styles.botaoDisabled, { backgroundColor: colors.button }]} 
-        onPress={handleSubmit} 
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color={colors.buttonText} />
-        ) : (
-          <Text style={[styles.botaoTexto, { color: colors.buttonText }]}>
-            {t('motoRegister.buttons.register')}
-          </Text>
-        )}
-      </Pressable>
-
-      <View style={styles.links}>
-        <Link href="/Patio" style={[styles.linkTexto, { color: colors.button }]}>
-          {t('motoRegister.links.view_all')}
-        </Link>
-        <Link href="/HomeScreen" style={[styles.linkTexto, { color: colors.button }]}>
-          {t('motoRegister.links.back_menu')}
-        </Link>
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24, flex: 1, justifyContent: 'center' },
-  buttonsContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', position: 'absolute', top: 50, left: 20, right: 20, gap: 10},
-  languageButton: { padding: 8, backgroundColor: '#2563eb', borderRadius: 8},
-  languageText: { color: '#fff', fontWeight: 'bold'},
-  titulo: { fontSize: 26, fontWeight: 'bold', marginBottom: 24, textAlign: 'center' },
-  input: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 15, paddingVertical: 12, fontSize: 16, marginBottom: 16 },
-  pickerInput: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 15, paddingVertical: 12, fontSize: 16, marginBottom: 16 },
-  botao: { paddingVertical: 14, borderRadius: 8, alignItems: 'center', marginBottom: 30 },
-  botaoDisabled: { opacity: 0.6 },
-  botaoTexto: { fontSize: 16, fontWeight: 'bold' },
-  links: { alignItems: 'center', gap: 12 },
-  linkTexto: { fontSize: 16 },
-  themeButton: { padding: 12, borderRadius: 10, marginBottom: 12, alignItems: 'center' },
-  themeButtonText: { fontSize: 16, fontWeight: 'bold' },
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
+  content: {
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 30,
+    textAlign: "center",
+    color: "#333",
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 10,
+    marginTop: 20,
+    color: "#333",
+  },
+  optionsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  option: {
+    flex: 1,
+    minWidth: "30%",
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#e0e0e0",
+  },
+  energyOption: {
+    flex: 1,
+    minWidth: "30%",
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#e0e0e0",
+  },
+  optionSelected: {
+    backgroundColor: "#e3f2fd",
+    borderColor: "#2196F3",
+  },
+  emoji: {
+    fontSize: 32,
+    marginBottom: 5,
+  },
+  energyIcon: {
+    fontSize: 24,
+    marginBottom: 5,
+  },
+  optionText: {
+    fontSize: 14,
+    color: "#666",
+    fontWeight: "500",
+  },
+  optionTextSelected: {
+    color: "#2196F3",
+    fontWeight: "bold",
+  },
+  textarea: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    borderRadius: 12,
+    padding: 15,
+    fontSize: 15,
+    minHeight: 100,
+    marginTop: 5,
+  },
+  button: {
+    backgroundColor: "#0066FF",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 30,
+  },
+  buttonDisabled: {
+    backgroundColor: "#ccc",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    backgroundColor: "transparent",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  cancelButtonText: {
+    color: "#666",
+    fontSize: 16,
+  },
 });
