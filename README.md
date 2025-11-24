@@ -1,45 +1,151 @@
-# 🛵 MotoMap - Mottu Challenge
+# 🌱 WellWork - Plataforma de Bem-Estar Corporativo
 
 ### 👨‍💻 Integrantes:
-- Eduardo do NAscimento Barriviera - **RM 555309**
+- Eduardo do Nascimento Barriviera - **RM 555309**
 - Thiago Lima de Freitas - **RM 556795**
 - Bruno Centurion Fernandes - **RM 556531**
 
 ---
-## 💡 Solução 
-### A Mottu enfrenta o desafio de localizar rapidamente motos em seus pátios, que frequentemente se encontram desorganizados e com alto volume de veículos. Essa dificuldade impacta diretamente a eficiência logística, especialmente quando é necessário identificar motos com problemas ou sem placa.
 
-### Nossa solução consiste em um aplicativo móvel desenvolvido com React Native e Expo, que simula o controle de estoque e localização de motos nos pátios. A proposta considera o uso de sensores RFID e o mapeamento das motos, com uma interface amigável para facilitar a visualização e o gerenciamento dos veículos.
+## 💡 Solução 
+
+### Empresas enfrentam o desafio crescente de monitorar o bem-estar emocional e mental de seus colaboradores, especialmente com o aumento de casos de burnout e problemas de saúde mental no ambiente corporativo. A falta de ferramentas adequadas dificulta a identificação precoce de sinais de esgotamento e a promoção de um ambiente de trabalho saudável.
+
+### Nossa solução consiste em um aplicativo móvel desenvolvido com React Native e Expo que utiliza Inteligência Artificial para monitorar o bem-estar dos colaboradores através de check-ins diários de humor e energia. O WellWork atua como um coach digital de autocuidado, oferecendo recomendações personalizadas baseadas nos padrões identificados pela IA.
+
 ---
+
 ## 📌 Descrição da Solução
+
 A aplicação permite:
 
-- ✅ Cadastro de motos com:
-  - Placa;
-  - **Status:** *pronta*, *revisao*, *reservada*, *fora de serviço*;
-- 📊 Relatórios por status com contagem e exibição das motos;
-- 📋 Listagem completa das motos cadastradas;
-- 🔄 Atualização e ❌ exclusão de motos;
-- 💾 Sistema de login com Firebase.
-- 🌗 Tema claro/escuro automático
----
-## 🚀 Como rodar o projeto localmente
-**1. Rode a API da disciplina de DotNet:**
-> https://github.com/edu1805/Challange-DotNet03
+### 🧭 Check-ins de Humor e Energia
+- ✅ Registro diário/semanal de:
+  - **Humor:** Feliz, Neutro, Triste, Estressado
+  - **Nível de Energia:** Baixa, Média, Alta
+  - **Observações:** Notas sobre o dia e sentimentos
 
-**2. Clone o repositório**
+### 🤖 IA de Bem-Estar
+- 💡 Geração automática de recomendações personalizadas
+- 📊 Análise de padrões de humor e energia
+- 🎯 Sugestões contextualizadas de autocuidado
+- ⚡ Identificação de sinais de cansaço ou estresse
+
+### 👤 Gerenciamento de Perfil
+- 🔐 Sistema de autenticação seguro
+- 📱 Histórico completo de check-ins
+- ⚙️ Configurações personalizadas
+
+### 🌐 Recursos Adicionais
+- 🌗 Tema claro/escuro
+- 🇧🇷 🇪🇸 Suporte a múltiplos idiomas (PT-BR / ES)
+- 📈 Visualização do histórico de bem-estar
+
+---
+
+## 🚀 Como rodar o projeto localmente
+
+### 1. Rode a API Java
+> https://github.com/thiglfa/Java-IoTGlobalS
+
+Clone e inicie a API seguindo as instruções do repositório. A API deve estar rodando em `http://localhost:8080`
+
+### 2. Clone o repositório do app mobile
 ```bash
-git clone https://github.com/edu1805/Projeto-Challenge-Mottu.git
-cd seu-repositorio
+git clone https://github.com/seu-usuario/WellWorkApp.git
+cd WellWorkApp
 ```
 
-**3. Instale as dependências**
+### 3. Instale as dependências
 ```bash
 npm install
 ```
 
-**4. Inicie o projeto com o Expo**
+### 4. Inicie o projeto com o Expo
 ```bash
-npm start
+npx expo start
 ```
-> Ou rode `npm run android` para rodar diretamente na versão de android.
+
+> Ou rode `npx expo start --android` para rodar diretamente no Android.
+> 
+> Para iOS: `npx expo start --ios`
+
+### 5. Configure a conexão com a API
+
+- **Android Emulator:** A URL `http://10.0.2.2:8080` já está configurada
+- **Dispositivo Físico:** Altere a baseURL em `src/services/api.ts` para o IP da sua máquina na rede local
+
+---
+
+## 📱 Funcionalidades Principais
+
+### 🏠 Tela Inicial (Home)
+- Visualização de todos os check-ins realizados
+- Cards com humor, energia e observações
+- Botão para gerar recomendações via IA
+- Histórico completo do bem-estar
+
+### ✅ Novo Check-in
+- Interface intuitiva para registro
+- Seleção visual de humor com emojis
+- Indicadores de nível de energia
+- Campo para observações detalhadas
+
+### 💡 Recomendações IA
+- Sugestões personalizadas baseadas no humor e energia
+- Análise de padrões de comportamento
+- Coach digital de autocuidado
+
+### 👤 Perfil do Usuário
+- Informações da conta
+- Acesso às configurações
+- Opção de logout seguro
+
+### ⚙️ Configurações
+- Alternância entre tema claro e escuro
+- Seleção de idioma (PT-BR / ES)
+- Informações sobre o app
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+### Frontend (Mobile)
+- **React Native** + **Expo**
+- **TypeScript**
+- **Expo Router** (navegação)
+- **Axios** (requisições HTTP)
+- **AsyncStorage** (armazenamento local)
+- **i18next** (internacionalização)
+
+### Backend (API)
+- **Java** + **Spring Boot**
+- **JWT** (autenticação)
+- **Oracle** (banco de dados)
+- **IA Generativa** (recomendações)
+
+---
+
+## 📂 Estrutura do Projeto
+```
+WellWorkApp/
+├── app/                      # Telas da aplicação (Expo Router)
+│   ├── _layout.tsx          # Layout raiz
+│   ├── index.tsx            # Tela de login
+│   ├── CadastroScreen.tsx         # Cadastro de usuário
+│   ├── HomeScreen.tsx             # Tela principal
+│   ├── Cadastro.tsx         # Novo check-in
+│   ├── Usuario.tsx          # Perfil do usuário
+│   └── Configuracoes.tsx    # Configurações
+├── src/
+│   ├── services/
+│   │   ├── api.ts           # Configuração Axios
+│   │   ├── auth.ts          # Funções de autenticação
+│   │   └── i18n.ts          # Configuração i18n
+│   ├── context/
+│   │   └── ThemeContext.tsx # Contexto de tema
+│   └── locales/
+│       ├── pt.json          # Traduções PT-BR
+│       └── es.json          # Traduções ES
+└── package.json
+```
