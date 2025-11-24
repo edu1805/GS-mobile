@@ -11,6 +11,8 @@ import {
 import { useRouter } from "expo-router";
 import { createCheckin } from "../src/services/auth";
 import React from "react";
+import { useTheme } from "../src/context/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 export default function CheckinScreen() {
   const [mood, setMood] = useState<number | null>(null);
@@ -18,34 +20,45 @@ export default function CheckinScreen() {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
 
-  // Mapas de mood e energia
+  // Mapas de mood e energia com tradução
   const moods = [
-    { value: 0, label: "Feliz", emoji: "😊" },
-    { value: 1, label: "Neutro", emoji: "😐" },
-    { value: 2, label: "Triste", emoji: "😢" },
-    { value: 3, label: "Estressado", emoji: "😠" },
+    { value: 0, label: t('Checkin.humor_feliz'), emoji: "😊" },
+    { value: 1, label: t('Checkin.humor_neutro'), emoji: "😐" },
+    { value: 2, label: t('Checkin.humor_triste'), emoji: "😢" },
+    { value: 3, label: t('Checkin.humor_estressado'), emoji: "😠" },
   ];
 
   const energyLevels = [
-    { value: 2, label: "Baixa", icon: "🔋" },
-    { value: 1, label: "Média", icon: "🔋🔋" },
-    { value: 0, label: "Alta", icon: "🔋🔋🔋" },
+    { value: 2, label: t('Checkin.energia_baixa'), icon: "🔋" },
+    { value: 1, label: t('Checkin.energia_media'), icon: "🔋🔋" },
+    { value: 0, label: t('Checkin.energia_alta'), icon: "🔋🔋🔋" },
   ];
 
   async function handleSubmit() {
     if (mood === null) {
-      Alert.alert("Atenção", "Selecione seu humor");
+      Alert.alert(
+        t('Checkin.alerta_atencao'), 
+        t('Checkin.alerta_selecione_humor')
+      );
       return;
     }
 
     if (energyLevel === null) {
-      Alert.alert("Atenção", "Selecione seu nível de energia");
+      Alert.alert(
+        t('Checkin.alerta_atencao'), 
+        t('Checkin.alerta_selecione_energia')
+      );
       return;
     }
 
     if (!notes.trim()) {
-      Alert.alert("Atenção", "Adicione uma observação");
+      Alert.alert(
+        t('Checkin.alerta_atencao'), 
+        t('Checkin.alerta_observacao_vazia')
+      );
       return;
     }
 
@@ -55,35 +68,50 @@ export default function CheckinScreen() {
       const result = await createCheckin(mood, energyLevel, notes);
 
       if (result.success) {
-        Alert.alert("Sucesso!", "Check-in registrado com sucesso", [
-          {
-            text: "OK",
-            onPress: () => router.replace("/HomeScreen")
-          }
-        ]);
+        Alert.alert(
+          t('Checkin.alerta_sucesso_titulo'), 
+          t('Checkin.alerta_sucesso_texto'), 
+          [
+            {
+              text: "OK",
+              onPress: () => router.replace("/HomeScreen")
+            }
+          ]
+        );
       } else {
-        Alert.alert("Erro", result.error || "Erro ao criar check-in");
+        Alert.alert(
+          t('Checkin.alerta_erro_titulo'), 
+          result.error || t('Checkin.alerta_erro_texto')
+        );
       }
     } catch (error) {
-      Alert.alert("Erro", "Erro ao conectar com o servidor");
+      Alert.alert(
+        t('Checkin.alerta_erro_titulo'), 
+        t('Checkin.alerta_erro_conexao')
+      );
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <Text style={styles.title}>Como você está se sentindo?</Text>
+        <Text style={[styles.title, { color: colors.text }]}>
+          {t('Checkin.titulo')}
+        </Text>
 
         {/* Seleção de Humor */}
-        <Text style={styles.label}>Humor</Text>
+        <Text style={[styles.label, { color: colors.text }]}>
+          {t('Checkin.label_humor')}
+        </Text>
         <View style={styles.optionsContainer}>
           {moods.map((item) => (
             <TouchableOpacity
               key={item.value}
               style={[
                 styles.option,
+                { backgroundColor: colors.input, borderColor: colors.placeHolderTextColor },
                 mood === item.value && styles.optionSelected
               ]}
               onPress={() => setMood(item.value)}
@@ -91,6 +119,7 @@ export default function CheckinScreen() {
               <Text style={styles.emoji}>{item.emoji}</Text>
               <Text style={[
                 styles.optionText,
+                { color: colors.text },
                 mood === item.value && styles.optionTextSelected
               ]}>
                 {item.label}
@@ -100,13 +129,16 @@ export default function CheckinScreen() {
         </View>
 
         {/* Seleção de Energia */}
-        <Text style={styles.label}>Nível de Energia</Text>
+        <Text style={[styles.label, { color: colors.text }]}>
+          {t('Checkin.label_energia')}
+        </Text>
         <View style={styles.optionsContainer}>
           {energyLevels.map((item) => (
             <TouchableOpacity
               key={item.value}
               style={[
                 styles.energyOption,
+                { backgroundColor: colors.input, borderColor: colors.placeHolderTextColor },
                 energyLevel === item.value && styles.optionSelected
               ]}
               onPress={() => setEnergyLevel(item.value)}
@@ -114,6 +146,7 @@ export default function CheckinScreen() {
               <Text style={styles.energyIcon}>{item.icon}</Text>
               <Text style={[
                 styles.optionText,
+                { color: colors.text },
                 energyLevel === item.value && styles.optionTextSelected
               ]}>
                 {item.label}
@@ -123,10 +156,20 @@ export default function CheckinScreen() {
         </View>
 
         {/* Observações */}
-        <Text style={styles.label}>Observações</Text>
+        <Text style={[styles.label, { color: colors.text }]}>
+          {t('Checkin.label_observacoes')}
+        </Text>
         <TextInput
-          style={styles.textarea}
-          placeholder="Como foi seu dia? O que você está sentindo?"
+          style={[
+            styles.textarea, 
+            { 
+              backgroundColor: colors.input, 
+              color: colors.text,
+              borderColor: colors.placeHolderTextColor 
+            }
+          ]}
+          placeholder={t('Checkin.placeholder_observacoes')}
+          placeholderTextColor={colors.placeHolderTextColor}
           value={notes}
           onChangeText={setNotes}
           multiline
@@ -136,12 +179,16 @@ export default function CheckinScreen() {
 
         {/* Botões */}
         <TouchableOpacity 
-          style={[styles.button, loading && styles.buttonDisabled]} 
+          style={[
+            styles.button, 
+            { backgroundColor: colors.button },
+            loading && styles.buttonDisabled
+          ]} 
           onPress={handleSubmit}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>
-            {loading ? "Salvando..." : "Registrar Check-in"}
+          <Text style={[styles.buttonText, { color: colors.buttonText }]}>
+            {loading ? t('Checkin.botao_salvando') : t('Checkin.botao_salvar')}
           </Text>
         </TouchableOpacity>
 
@@ -149,7 +196,9 @@ export default function CheckinScreen() {
           style={styles.cancelButton} 
           onPress={() => router.replace("/HomeScreen")}
         >
-          <Text style={styles.cancelButtonText}>Cancelar</Text>
+          <Text style={[styles.cancelButtonText, { color: colors.placeHolderTextColor }]}>
+            {t('Checkin.botao_cancelar')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -159,7 +208,6 @@ export default function CheckinScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   content: {
     padding: 20,
@@ -169,14 +217,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 30,
     textAlign: "center",
-    color: "#333",
   },
   label: {
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 10,
     marginTop: 20,
-    color: "#333",
   },
   optionsContainer: {
     flexDirection: "row",
@@ -186,22 +232,18 @@ const styles = StyleSheet.create({
   option: {
     flex: 1,
     minWidth: "30%",
-    backgroundColor: "#fff",
     padding: 15,
     borderRadius: 12,
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#e0e0e0",
   },
   energyOption: {
     flex: 1,
     minWidth: "30%",
-    backgroundColor: "#fff",
     padding: 15,
     borderRadius: 12,
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#e0e0e0",
   },
   optionSelected: {
     backgroundColor: "#e3f2fd",
@@ -217,7 +259,6 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
-    color: "#666",
     fontWeight: "500",
   },
   optionTextSelected: {
@@ -225,9 +266,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   textarea: {
-    backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#e0e0e0",
     borderRadius: 12,
     padding: 15,
     fontSize: 15,
@@ -235,7 +274,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   button: {
-    backgroundColor: "#0066FF",
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
@@ -245,7 +283,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
   },
   buttonText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -257,7 +294,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   cancelButtonText: {
-    color: "#666",
     fontSize: 16,
   },
 });

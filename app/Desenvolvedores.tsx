@@ -38,7 +38,7 @@ export default function Integrantes() {
  return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
 
-      {/* 🔄 Botões de idioma e tema */}
+      {/* 🔄 Botões de idioma e tema
       <View style={styles.buttonsContainer}>
         <TouchableOpacity onPress={alternarIdioma} style={styles.languageButton}>
           <Text style={styles.languageText}>
@@ -54,7 +54,7 @@ export default function Integrantes() {
             {theme === "light" ? '🌙' : '☀️'}
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       <Text style={[styles.title, { color: colors.text }]}>{t('developers.title')}</Text>
 

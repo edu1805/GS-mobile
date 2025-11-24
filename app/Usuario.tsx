@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { logout, getUser } from '../src/services/auth';
+import { useTheme } from '../src/context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Usuario() {
   const [username, setUsername] = useState<string>("");
   const [userId, setUserId] = useState<number | null>(null);
   const router = useRouter();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadUserData();
@@ -22,15 +26,17 @@ export default function Usuario() {
     }
   }
 
-  // Função para realizar logoff
   const realizarLogoff = async () => {
     Alert.alert(
-      "Sair",
-      "Tem certeza que deseja sair?",
+      t('Usuario.alerta_sair_titulo'),
+      t('Usuario.alerta_sair_texto'),
       [
-        { text: "Cancelar", style: "cancel" },
+        { 
+          text: t('Usuario.alerta_cancelar'), 
+          style: "cancel" 
+        },
         {
-          text: "Sair",
+          text: t('Usuario.alerta_sair_confirmar'),
           style: "destructive",
           onPress: async () => {
             await logout();
@@ -41,39 +47,52 @@ export default function Usuario() {
     );
   };
 
-  // Função para ir para configurações
   const irParaConfiguracoes = () => {
     router.push('/Configuracoes');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Perfil do Usuário</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.titulo, { color: colors.text }]}>
+        {t('Usuario.titulo')}
+      </Text>
       
-      <View style={styles.infoBox}>
-        <Text style={styles.label}>Nome de usuário</Text>
-        <Text style={styles.valor}>{username}</Text>
+      <View style={[styles.infoBox, { backgroundColor: colors.input }]}>
+        <Text style={[styles.label, { color: colors.placeHolderTextColor }]}>
+          {t('Usuario.label_username')}
+        </Text>
+        <Text style={[styles.valor, { color: colors.text }]}>
+          {username}
+        </Text>
         
         {userId && (
           <>
-            <Text style={[styles.label, { marginTop: 15 }]}>ID do usuário</Text>
-            <Text style={styles.valor}>#{userId}</Text>
+            <Text style={[styles.label, { marginTop: 15, color: colors.placeHolderTextColor }]}>
+              {t('Usuario.label_id')}
+            </Text>
+            <Text style={[styles.valor, { color: colors.text }]}>
+              #{userId}
+            </Text>
           </>
         )}
       </View>
 
       <TouchableOpacity 
-        style={[styles.botao, { backgroundColor: '#0066FF' }]} 
+        style={[styles.botao, { backgroundColor: colors.button }]} 
         onPress={irParaConfiguracoes}
       >
-        <Text style={styles.textoBotao}>⚙️ Configurações</Text>
+        <Text style={[styles.textoBotao, { color: colors.buttonText }]}>
+          {t('Usuario.botao_configuracoes')}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
         style={[styles.botao, { backgroundColor: '#dc2626' }]} 
         onPress={realizarLogoff}
       >
-        <Text style={styles.textoBotao}>🚪 Sair da Conta</Text>
+        <Text style={styles.textoBotao}>
+          {t('Usuario.botao_sair')}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -84,17 +103,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
   },
   titulo: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 30,
     textAlign: 'center',
-    color: '#333',
   },
   infoBox: {
-    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 12,
     marginBottom: 30,
@@ -106,13 +122,11 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 5,
   },
   valor: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#333',
   },
   botao: {
     padding: 15,

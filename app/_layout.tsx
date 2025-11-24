@@ -54,7 +54,7 @@ function ThemedDrawer() {
           title: "Configurações",
           drawerLabel: "Configurações",
           drawerIcon: ({ color, size }) => (
-            <Ionicons name="bicycle-outline" size={size} color={color} />
+            <Ionicons name="settings-outline" size={size} color={color} />
           ),
         }}
       />

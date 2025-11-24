@@ -1,214 +1,101 @@
 {
-  "login": {
-    "title": "Login",
-    "subtitle": "Sistema de Gerenciamento de Motos"
+  "Usuario": {
+    "titulo": "Perfil do Usuário",
+    "label_username": "Nome de usuário",
+    "label_id": "ID do usuário",
+    "botao_configuracoes": "⚙️ Configurações",
+    "botao_sair": "🚪 Sair da Conta",
+    "alerta_sair_titulo": "Sair",
+    "alerta_sair_texto": "Tem certeza que deseja sair?",
+    "alerta_cancelar": "Cancelar",
+    "alerta_sair_confirmar": "Sair"
   },
-  "placeholders": {
-    "email": "E-mail",
-    "password": "Senha"
+
+  "Configuracoes": {
+    "titulo": "Configurações",
+    
+    "secao_aparencia": "🎨 Aparência",
+    "tema_claro": "☀️ Tema Claro",
+    "tema_escuro": "🌙 Tema Escuro",
+    "descricao_tema": "Alterar entre tema claro e escuro",
+
+    "secao_idioma": "🌐 Idioma",
+    "idioma_portugues": "🇧🇷 Português (Brasil)",
+    "idioma_espanhol": "🇪🇸 Español",
+    "descricao_idioma": "Alterar idioma do aplicativo",
+
+    "secao_sobre": "ℹ️ Sobre",
+    "versao_app": "Versão do App",
+    "desenvolvido_por": "Desenvolvido por",
+    "valor_desenvolvedor": "WellWork Team",
+
+    "botao_voltar": "← Voltar"
   },
-  "buttons": {
-    "login": "Entrar"
-  },
-  "links": {
-    "forgot_password": "Esqueceu a senha?",
-    "create_account": "Criar uma conta"
-  },
-  "alerts": {
-    "warning": "Atenção",
-    "error": "Erro",
-    "success": "Sucesso",
-    "fill_fields": "Preencha todos os campos!",
-    "enter_email_reset": "Digite o email para recuperar a senha",
-    "email_sent": "E-mail de recuperação enviado!",
-    "email_error": "Erro ao enviar e-mail. Verifique se o email está correto."
-  },
-  "errors": {
-    "login_failed": "Erro ao fazer login",
-    "invalid_credentials": "Email ou senha incorretos",
-    "invalid_email": "Email inválido",
-    "user_disabled": "Usuário desativado",
-    "too_many_attempts": "Muitas tentativas. Tente novamente mais tarde",
-    "unknown": "Erro desconhecido"
-  },
-  "user": {
-    "title": "👤 Meu Perfil",
-    "connected_with": "Conectado com:",
-    "buttons": {
-      "toggle_theme_light": "🌙 Mudar para Modo Escuro",
-      "toggle_theme_dark": "🌞 Mudar para Modo Claro",
-      "logout": "Sair da Conta",
-      "delete_account": "Excluir Conta"
-    },
-    "alertsUser": {
-      "delete_title": "Confirmar Exclusão",
-      "delete_message": "Tem certeza que deseja excluir sua conta? Esta ação não poderá ser desfeita!",
-      "cancel": "Cancelar",
-      "confirm_delete": "Excluir",
-      "deleted": "Conta Excluída",
-      "deleted_message": "Sua conta foi excluída com sucesso.",
-      "no_user": "Nenhum usuário logado.",
-      "delete_error": "Não foi possível excluir a conta."
-    }
-  },
-  "register": {
-    "title": "👤 Criar Conta",
-    "placeholders": {
-      "name": "Nome",
-      "email": "E-mail",
-      "password": "Senha"
-    },
-    "buttons": {
-      "register": "Cadastrar",
-      "back": "Voltar"
-    },
-    "alertsCreate": {
-      "success_create": "Conta criada com sucesso!",
-      "error_create": "Erro ao criar conta",
-      "weak_password": "A senha deve conter pelo menos 6 caracteres.",
-      "email_in_use": "E-mail já está em uso. Tente outro."
-    }
+
+  "Checkin": {
+    "titulo": "Como você está se sentindo?",
+    
+    "label_humor": "Humor",
+    "humor_feliz": "Feliz",
+    "humor_neutro": "Neutro",
+    "humor_triste": "Triste",
+    "humor_estressado": "Estressado",
+
+    "label_energia": "Nível de Energia",
+    "energia_baixa": "Baixa",
+    "energia_media": "Média",
+    "energia_alta": "Alta",
+
+    "label_observacoes": "Observações",
+    "placeholder_observacoes": "Como foi seu dia? O que você está sentindo?",
+
+    "botao_salvar": "Registrar Check-in",
+    "botao_salvando": "Salvando...",
+    "botao_cancelar": "Cancelar",
+
+    "alerta_atencao": "Atenção",
+    "alerta_selecione_humor": "Selecione seu humor",
+    "alerta_selecione_energia": "Selecione seu nível de energia",
+    "alerta_observacao_vazia": "Adicione uma observação",
+
+    "alerta_sucesso_titulo": "Sucesso!",
+    "alerta_sucesso_texto": "Check-in registrado com sucesso",
+
+    "alerta_erro_titulo": "Erro",
+    "alerta_erro_texto": "Erro ao criar check-in",
+    "alerta_erro_conexao": "Erro ao conectar com o servidor"
   },
   "developers": {
     "title": "👨‍💻 Desenvolvedores",
-    "objectiveTitle": "🎯 Nosso Objetivo",
-    "objectiveText1": "Este projeto foi desenvolvido com o intuito de solucionar um problema real enfrentado pela empresa Mottu: a desorganização e falta de controle sobre a localização das motos nos pátios de suas filiais.",
-    "objectiveText2": "Nossa solução propõe um sistema capaz de mapear e monitorar, de forma precisa e automatizada, todas as motos nos pátios. Utilizando tecnologias modernas, o sistema coleta e exibe as informações em uma interface visual intuitiva, permitindo uma gestão mais eficiente e rápida localização das motos."
+    "objectiveTitle": "WellWork - Plataforma de Bem-Estar Corporativo",
+    "objectiveText1": "Este projeto foi desenvolvido para promover o bem-estar e a produtividade de colaboradores através de check-ins de humor e energia. O WellWork é uma plataforma que utiliza Inteligência Artificial para analisar o estado emocional e energético dos usuários, oferecendo recomendações personalizadas de autocuidado e equilíbrio.",
+    "objectiveText2": "Através de check-ins diários ou semanais, a IA detecta padrões de humor, cansaço e motivação, atuando como um coach digital que auxilia na manutenção do bem-estar mental e físico dos colaboradores."
   },
-  "motoRegister": {
-    "title": "Cadastrar Nova Moto",
-    "placeholders": {
-      "plate": "Placa (ex: ABC1D23)",
-      "position": "Posição (ex: A1, B2, C3)",
-      "status": "Selecione o status..."
-    },
-    "statuses": {
-      "ready": "Pronta para usar",
-      "revision": "Requer revisão",
-      "reserved": "Reservada",
-      "out_of_service": "Fora de serviço"
-    },
-    "buttons": {
-      "register": "Cadastrar Moto",
-      "theme_light": "🌙 Modo Escuro",
-      "theme_dark": "🌞 Modo Claro"
-    },
-    "links": {
-      "view_all": "📋 Ver Todas as Motos",
-      "back_menu": "🏠 Voltar ao Menu"
-    },
-    "alerts": {
-      "warning": "Atenção",
-      "fill_plate": "Informe a placa da moto.",
-      "fill_position": "Informe a posição da moto.",
-      "select_status": "Selecione o status da moto.",
-      "success_title": "Sucesso",
-      "success_message": "Moto {{plate}} cadastrada com sucesso!\nPosição: {{position}}\nStatus: {{status}}",
-      "error_title": "Erro ao cadastrar moto.",
-      "error_invalid": "Dados inválidos.",
-      "error_conflict": "Moto já cadastrada.",
-      "error_server": "Erro no servidor.",
-      "error_connection": "Não foi possível conectar ao servidor."
-    }
-  },
-  "patio": {
-    "title": "Lista de Motos",
-    "subtitle": "Total: {{count}} motos",
-    "buttons": {
-      "create": "Cadastrar nova moto",
-      "retry": "Tentar novamente",
-      "theme_dark": "🌙 Modo Escuro",
-      "theme_light": "🌞 Modo Claro",
-      "delete": "Excluir"
-    },
-    "labels": {
-      "position": "Posição: {{position}}",
-      "status": "Status: {{status}}",
-      "updated": "Atualizado: {{date}}"
-    },
-    "status": {
-      "pronta": "Pronta",
-      "revisao": "Revisão",
-      "reservada": "Reservada",
-      "fora_de_servico": "Fora de serviço"
-    },
-    "alerts": {
-      "error_title": "Erro",
-      "error_load": "Não foi possível carregar as motos.",
-      "error_delete": "Não foi possível excluir a moto.",
-      "success_title": "Sucesso",
-      "success_delete": "Moto excluída com sucesso!",
-      "confirm_delete_title": "Confirmar Exclusão",
-      "confirm_delete_message": "Tem certeza que deseja excluir esta moto?"
-    },
-    "empty": {
-      "message": "Nenhuma moto cadastrada."
-    },
-    "links": {
-      "back_menu": "Voltar ao Menu"
-    },
-    "loading": {
-      "message": "Carregando motos..."
-    }
-  },
-  "dashboard": {
-    "title": "📍 Dashboard de Motos",
-    "subtitle": "Total: {{count}} motos",
-    "loading": "Carregando motos...",
-    "empty": "Nenhuma moto encontrada",
-    "retry": "Tentar novamente",
-    "buttons": {
-      "new_moto": "+ Nova Moto",
-      "view_all": "Ver todas",
-      "cancel": "Cancelar",
-      "theme_dark": "🌙 Modo escuro",
-      "theme_light": "☀️ Modo claro"
-    },
-    "modal": {
-      "title": "Editar Moto",
-      "plate": "Placa: {{plate}}",
-      "current_status": "Status atual: {{status}}",
-      "new_position": "Nova Posição:",
-      "position_placeholder": "Ex: A1, B2, C3...",
-      "change_status": "Alterar Status:",
-      "updating": "Atualizando..."
-    },
-    "status": {
-      "pronta": "Pronta",
-      "revisao": "Revisão",
-      "reservada": "Reservada",
-      "fora_de_servico": "Fora de serviço"
-    },
-    "alerts": {
-      "success": "Sucesso",
-      "success_message": "Moto {{plate}} atualizada!\nStatus: {{status}}\nPosição: {{position}}",
-      "error": "Erro",
-      "load_error": "Não foi possível carregar as motos",
-      "update_error": "Não foi possível atualizar a moto"
-    }
-  },
-  "report": {
-    "title": "📊 Relatório de Motos por Status",
-    "loading": "Carregando relatório...",
-    "total_registered": "Total de motos cadastradas: {{count}}",
-    "empty": "Nenhuma mota cadastrada",
-    "retry": "Tentar novamente",
-    "position": "Posição: {{position}}",
-    "buttons": {
-      "back_menu": "Voltar ao menu",
-      "theme_dark": "🌙 Modo Escuro",
-      "theme_light": "🌞 Modo Claro"
-    },
-    "status": {
-      "pronta": "Pronta",
-      "revisao": "Revisão",
-      "reservada": "Reservada",
-      "fora_de_servico": "Fora de serviço"
-    },
-    "status_count": "{{status}}: {{count}}",
-    "alerts": {
-      "error": "Erro",
-      "load_error": "Não foi possível carregar as motos para o relatório"
-    }
+  "Home": {
+    "saudacao": "Olá, {{username}} 👋",
+    "usuario_padrao": "usuário",
+    "titulo_checkins": "Seus Check-ins",
+    "botao_novo": "+ Novo Check-in",
+    "botao_sair": "Sair",
+    "sem_checkins": "Nenhum check-in registrado ainda.",
+    
+    "label_energia": "Energia",
+    "titulo_recomendacao": "💡 Recomendação:",
+    "botao_gerar": "🤖 Gerar Recomendação",
+    "botao_gerando": "🤖 Gerando...",
+    
+    "humor_happy": "Feliz",
+    "humor_sad": "Triste",
+    "humor_neutral": "Neutro",
+    "humor_stressed": "Estressado",
+    
+    "energia_low": "Baixa",
+    "energia_medium": "Média",
+    "energia_high": "Alta",
+    
+    "alerta_sucesso_titulo": "Sucesso!",
+    "alerta_sucesso_texto": "Recomendação gerada com sucesso!",
+    "alerta_erro_titulo": "Erro",
+    "alerta_erro_texto": "Não foi possível gerar a recomendação. Tente novamente."
   }
 }

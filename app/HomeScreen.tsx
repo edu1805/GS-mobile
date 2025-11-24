@@ -4,6 +4,8 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { logout, getUser, getCheckins } from "../src/services/auth";
 import api from "../src/services/api";
 import React from "react";
+import { useTheme } from "../src/context/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 type Checkin = {
   id: number;
@@ -20,6 +22,8 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [generatingId, setGeneratingId] = useState<number | null>(null);
   const router = useRouter();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -51,37 +55,40 @@ export default function HomeScreen() {
     router.replace("/");
   }
 
-  // ✅ Nova função para gerar mensagem
   async function gerarMensagem(checkinId: number) {
-  try {
-    setGeneratingId(checkinId);
-    console.log('🤖 Gerando mensagem para check-in:', checkinId);
+    try {
+      setGeneratingId(checkinId);
+      console.log('🤖 Gerando mensagem para check-in:', checkinId);
 
-    const response = await api.post(`/api/checkins/${checkinId}/generate-message`);
-    
-    console.log('✅ Mensagem gerada:', response.data);
+      const response = await api.post(`/api/checkins/${checkinId}/generate-message`);
+      
+      console.log('✅ Mensagem gerada:', response.data);
 
-    // ✅ CORREÇÃO: O campo na resposta é "message", não "generatedMessage"
-    const mensagemGerada = response.data.message;
+      const mensagemGerada = response.data.message;
 
-    // Atualiza o check-in específico na lista
-    setCheckins(prevCheckins =>
-      prevCheckins.map(checkin =>
-        checkin.id === checkinId
-          ? { ...checkin, generatedMessage: mensagemGerada } // ✅ Atualiza com o campo correto
-          : checkin
-      )
-    );
+      setCheckins(prevCheckins =>
+        prevCheckins.map(checkin =>
+          checkin.id === checkinId
+            ? { ...checkin, generatedMessage: mensagemGerada }
+            : checkin
+        )
+      );
 
-    Alert.alert('Sucesso!', 'Recomendação gerada com sucesso!');
+      Alert.alert(
+        t('Home.alerta_sucesso_titulo'),
+        t('Home.alerta_sucesso_texto')
+      );
 
-  } catch (error: any) {
-    console.log('❌ Erro ao gerar mensagem:', error.response?.data || error.message);
-    Alert.alert('Erro', 'Não foi possível gerar a recomendação. Tente novamente.');
-  } finally {
-    setGeneratingId(null);
+    } catch (error: any) {
+      console.log('❌ Erro ao gerar mensagem:', error.response?.data || error.message);
+      Alert.alert(
+        t('Home.alerta_erro_titulo'),
+        t('Home.alerta_erro_texto')
+      );
+    } finally {
+      setGeneratingId(null);
+    }
   }
-}
 
   const getMoodEmoji = (mood: string) => {
     const moods: { [key: string]: string } = {
@@ -94,46 +101,41 @@ export default function HomeScreen() {
   };
 
   const getMoodLabel = (mood: string) => {
-    const labels: { [key: string]: string } = {
-      HAPPY: "Feliz",
-      SAD: "Triste",
-      NEUTRAL: "Neutro",
-      STRESSED: "Estressado",
-    };
-    return labels[mood] || mood;
+    return t(`Home.humor_${mood.toLowerCase()}`);
   };
 
   const getEnergyLabel = (energy: string) => {
-    const labels: { [key: string]: string } = {
-      LOW: "Baixa",
-      MEDIUM: "Média",
-      HIGH: "Alta",
-    };
-    return labels[energy] || energy;
+    return t(`Home.energia_${energy.toLowerCase()}`);
   };
 
   const renderCheckin = ({ item }: { item: Checkin }) => (
-    <View style={styles.checkinCard}>
+    <View style={[styles.checkinCard, { backgroundColor: colors.input }]}>
       <View style={styles.checkinHeader}>
         <Text style={styles.moodEmoji}>{getMoodEmoji(item.mood)}</Text>
         <View style={styles.checkinInfo}>
-          <Text style={styles.mood}>{getMoodLabel(item.mood)}</Text>
-          <Text style={styles.energy}>Energia: {getEnergyLabel(item.energyLevel)}</Text>
+          <Text style={[styles.mood, { color: colors.text }]}>
+            {getMoodLabel(item.mood)}
+          </Text>
+          <Text style={[styles.energy, { color: colors.placeHolderTextColor }]}>
+            {t('Home.label_energia')}: {getEnergyLabel(item.energyLevel)}
+          </Text>
         </View>
       </View>
 
       {item.notes && (
-        <Text style={styles.notes}>{item.notes}</Text>
+        <Text style={[styles.notes, { color: colors.text }]}>
+          {item.notes}
+        </Text>
       )}
 
-      {/* ✅ Mostra mensagem se existir */}
       {item.generatedMessage ? (
         <View style={styles.messageBox}>
-          <Text style={styles.messageTitle}>💡 Recomendação:</Text>
+          <Text style={styles.messageTitle}>
+            {t('Home.titulo_recomendacao')}
+          </Text>
           <Text style={styles.message}>{item.generatedMessage}</Text>
         </View>
       ) : (
-        // ✅ Botão para gerar mensagem se não existir
         <TouchableOpacity
           style={[
             styles.generateButton,
@@ -143,7 +145,9 @@ export default function HomeScreen() {
           disabled={generatingId === item.id}
         >
           <Text style={styles.generateButtonText}>
-            {generatingId === item.id ? '🤖 Gerando...' : '🤖 Gerar Recomendação'}
+            {generatingId === item.id 
+              ? t('Home.botao_gerando')
+              : t('Home.botao_gerar')}
           </Text>
         </TouchableOpacity>
       )}
@@ -152,33 +156,41 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0066FF" />
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.button} />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Olá, {username || "usuário"} 👋</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.input }]}>
+        <Text style={[styles.title, { color: colors.text }]}>
+          {t('Home.saudacao', { username: username || t('Home.usuario_padrao') })}
+        </Text>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Sair</Text>
+          <Text style={styles.logoutText}>{t('Home.botao_sair')}</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.subtitle}>Seus Check-ins</Text>
+      <Text style={[styles.subtitle, { color: colors.text }]}>
+        {t('Home.titulo_checkins')}
+      </Text>
 
       <TouchableOpacity 
-        style={styles.addButton} 
+        style={[styles.addButton, { backgroundColor: colors.button }]} 
         onPress={() => router.push("/Cadastro")}
       >
-        <Text style={styles.addButtonText}>+ Novo Check-in</Text>
+        <Text style={[styles.addButtonText, { color: colors.buttonText }]}>
+          {t('Home.botao_novo')}
+        </Text>
       </TouchableOpacity>
 
       {checkins.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Nenhum check-in registrado ainda.</Text>
+          <Text style={[styles.emptyText, { color: colors.placeHolderTextColor }]}>
+            {t('Home.sem_checkins')}
+          </Text>
         </View>
       ) : (
         <FlatList
@@ -195,7 +207,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   loadingContainer: {
     flex: 1,
@@ -207,7 +218,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
   },
@@ -232,7 +242,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   addButton: {
-    backgroundColor: "#0066FF",
     marginHorizontal: 20,
     padding: 15,
     borderRadius: 12,
@@ -240,7 +249,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   addButtonText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -249,7 +257,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   checkinCard: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 15,
     marginBottom: 15,
@@ -274,16 +281,13 @@ const styles = StyleSheet.create({
   mood: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
   },
   energy: {
     fontSize: 14,
-    color: "#666",
     marginTop: 2,
   },
   notes: {
     fontSize: 15,
-    color: "#444",
     marginTop: 5,
     lineHeight: 20,
   },
@@ -306,7 +310,6 @@ const styles = StyleSheet.create({
     color: "#333",
     lineHeight: 20,
   },
-  // ✅ Novos estilos para o botão de gerar mensagem
   generateButton: {
     backgroundColor: "#4CAF50",
     padding: 12,
@@ -330,7 +333,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#999",
     textAlign: "center",
   },
 });

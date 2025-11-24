@@ -16,11 +16,15 @@ export default function Configuracoes() {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.titulo, { color: colors.text }]}>Configurações</Text>
+      <Text style={[styles.titulo, { color: colors.text }]}>
+        {t('Configuracoes.titulo')}
+      </Text>
 
       {/* Seção de Aparência */}
       <View style={styles.secao}>
-        <Text style={[styles.tituloSecao, { color: colors.text }]}>🎨 Aparência</Text>
+        <Text style={[styles.tituloSecao, { color: colors.text }]}>
+          {t('Configuracoes.secao_aparencia')}
+        </Text>
         
         <TouchableOpacity 
           style={[styles.opcao, { backgroundColor: colors.input }]} 
@@ -28,10 +32,12 @@ export default function Configuracoes() {
         >
           <View style={styles.opcaoConteudo}>
             <Text style={[styles.opcaoTitulo, { color: colors.text }]}>
-              {theme === 'light' ? '☀️ Tema Claro' : '🌙 Tema Escuro'}
+              {theme === 'light' 
+                ? t('Configuracoes.tema_claro')
+                : t('Configuracoes.tema_escuro')}
             </Text>
             <Text style={[styles.opcaoDescricao, { color: colors.placeHolderTextColor }]}>
-              Alterar entre tema claro e escuro
+              {t('Configuracoes.descricao_tema')}
             </Text>
           </View>
           <Text style={[styles.opcaoIcone, { color: colors.button }]}>
@@ -42,7 +48,9 @@ export default function Configuracoes() {
 
       {/* Seção de Idioma */}
       <View style={styles.secao}>
-        <Text style={[styles.tituloSecao, { color: colors.text }]}>🌐 Idioma</Text>
+        <Text style={[styles.tituloSecao, { color: colors.text }]}>
+          {t('Configuracoes.secao_idioma')}
+        </Text>
         
         <TouchableOpacity 
           style={[styles.opcao, { backgroundColor: colors.input }]} 
@@ -50,10 +58,12 @@ export default function Configuracoes() {
         >
           <View style={styles.opcaoConteudo}>
             <Text style={[styles.opcaoTitulo, { color: colors.text }]}>
-              {i18n.language === 'pt' ? '🇧🇷 Português (Brasil)' : '🇪🇸 Español'}
+              {i18n.language === 'pt' 
+                ? t('Configuracoes.idioma_portugues')
+                : t('Configuracoes.idioma_espanhol')}
             </Text>
             <Text style={[styles.opcaoDescricao, { color: colors.placeHolderTextColor }]}>
-              Alterar idioma do aplicativo
+              {t('Configuracoes.descricao_idioma')}
             </Text>
           </View>
           <Text style={[styles.opcaoIcone, { color: colors.button }]}>
@@ -64,11 +74,13 @@ export default function Configuracoes() {
 
       {/* Seção Sobre */}
       <View style={styles.secao}>
-        <Text style={[styles.tituloSecao, { color: colors.text }]}>ℹ️ Sobre</Text>
+        <Text style={[styles.tituloSecao, { color: colors.text }]}>
+          {t('Configuracoes.secao_sobre')}
+        </Text>
         
         <View style={[styles.infoBox, { backgroundColor: colors.input }]}>
           <Text style={[styles.infoLabel, { color: colors.placeHolderTextColor }]}>
-            Versão do App
+            {t('Configuracoes.versao_app')}
           </Text>
           <Text style={[styles.infoValor, { color: colors.text }]}>
             1.0.0
@@ -77,10 +89,10 @@ export default function Configuracoes() {
 
         <View style={[styles.infoBox, { backgroundColor: colors.input }]}>
           <Text style={[styles.infoLabel, { color: colors.placeHolderTextColor }]}>
-            Desenvolvido por
+            {t('Configuracoes.desenvolvido_por')}
           </Text>
           <Text style={[styles.infoValor, { color: colors.text }]}>
-            WellWork Team
+            {t('Configuracoes.valor_desenvolvedor')}
           </Text>
         </View>
       </View>
@@ -88,10 +100,10 @@ export default function Configuracoes() {
       {/* Botão Voltar */}
       <TouchableOpacity 
         style={[styles.botaoVoltar, { backgroundColor: colors.button }]} 
-        onPress={() => router.replace("/Usuario")}
+        onPress={() => router.back()}
       >
         <Text style={[styles.botaoVoltarTexto, { color: colors.buttonText }]}>
-          ← Voltar
+          {t('Configuracoes.botao_voltar')}
         </Text>
       </TouchableOpacity>
     </ScrollView>
