@@ -132,10 +132,11 @@ WellWorkApp/
 ├── app/                      # Telas da aplicação (Expo Router)
 │   ├── _layout.tsx          # Layout raiz
 │   ├── index.tsx            # Tela de login
-│   ├── CadastroScreen.tsx         # Cadastro de usuário
+│   ├── CadastrarScreen.tsx         # Cadastro de usuário
 │   ├── HomeScreen.tsx             # Tela principal
 │   ├── Cadastro.tsx         # Novo check-in
 │   ├── Usuario.tsx          # Perfil do usuário
+|   ├── Desenvolvedores      # Tela dos desenvolvedores
 │   └── Configuracoes.tsx    # Configurações
 ├── src/
 │   ├── services/
