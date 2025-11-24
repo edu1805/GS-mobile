@@ -32,7 +32,7 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.VIBRATE"
       ],
-      "package": "com.eduu10.Dashboard"
+      "package": "com.eduu10.WellWork"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -52,8 +52,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "3bb1483b-9946-492a-a96d-e64d4c5a1ed5"
+        "projectId": "945ab99e-cf2a-4017-ad04-025832234b76"
       }
-    }
+    },
+    "owner": "eduu10"
   }
 }

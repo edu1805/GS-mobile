@@ -1,4 +1,4 @@
-package com.eduu10.Dashboard
+package com.eduu10.WellWork
 
 import android.os.Build
 import android.os.Bundle

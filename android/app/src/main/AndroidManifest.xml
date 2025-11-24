@@ -29,8 +29,8 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="Dashboard"/>
-        <data android:scheme="com.eduu10.Dashboard"/>
+        <data android:scheme="WellWorkApp"/>
+        <data android:scheme="com.eduu10.WellWork"/>
       </intent-filter>
     </activity>
   </application>

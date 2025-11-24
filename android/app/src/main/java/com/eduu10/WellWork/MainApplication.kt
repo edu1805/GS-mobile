@@ -1,4 +1,4 @@
-package com.eduu10.Dashboard
+package com.eduu10.WellWork
 
 import android.app.Application
 import android.content.res.Configuration
